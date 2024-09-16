@@ -6,11 +6,15 @@ import updatePlayerMovement from "./player/updatePlayerMovement";
 import createEnemySpawner from "./enemySpawner/createEnemySpawner";
 import updateEnemyMovement from "./enemy/updateEnemyMovement";
 import createEnemy from "./enemy/createEnemy";
+import createBullet from "./bullet/createBullet";
+import spawnBullet from "./bullet/spawnBullet";
+import bulletCollision from "./bullet/bulletCollision";
 
 class MyGame extends Phaser.Scene {
-  private player!: Phaser.GameObjects.Rectangle;
+  private player!: any;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private enemies!: Phaser.GameObjects.Group;
+  private levelText!: Phaser.GameObjects.Text; // Text to display player level
 
   constructor() {
     super({ key: "MyGame" });
@@ -30,11 +34,23 @@ class MyGame extends Phaser.Scene {
 
     createEnemy.call(this);
     createEnemySpawner.call(this);
+
+    // Create bullets
+    createBullet.call(this);
+
+    // Enable bullet collision with enemies
+    bulletCollision.call(this);
+
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      spawnBullet.call(this, pointer);
+    });
   }
 
   update(): void {
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this, Phaser);
+
+    this.levelText.setText(`Level: ${this.player.level}`);
   }
 }
 
