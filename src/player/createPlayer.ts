@@ -1,13 +1,13 @@
 export default function createPlayer(x: number, y: number) {
-  // Opret en spiller sprite
+  // Opret en spiller sprite med fysik
   this.player = this.physics.add.sprite(x, y, 'playerStand');
-  
-  // Tilføj en properties for niveau og XP
+
+  // Tilføj properties for niveau og XP
   this.player.level = 1;
   this.player.xp = 0;
-  this.player.xpToNextLevel = 100; // XP needed for the next level
+  this.player.xpToNextLevel = 100; // XP required for the next level
 
-  // Opret animationer
+  // Opret animationer for spillerens bevægelse (walk)
   this.anims.create({
     key: 'walk',
     frames: [
@@ -15,15 +15,6 @@ export default function createPlayer(x: number, y: number) {
       { key: 'playerWalk2' }
     ],
     frameRate: 10,
-    repeat: -1
+    repeat: -1 // Animationen skal gentage sig selv
   });
-
-  // Opret en statisk level bar baggrund
-  // Tilføj level bar og reload bar hvis nødvendigt
-
-
-  // Tilføj properties til at spore spillerens niveau og XP
-  this.player.level = 1;
-  this.player.xp = 0;
-  this.player.xpToNextLevel = 100; // XP required for the next level
 }
