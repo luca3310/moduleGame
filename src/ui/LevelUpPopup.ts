@@ -8,7 +8,7 @@ export default class LevelUpPopup {
   constructor(private scene: Phaser.Scene) {}
 
   create(level: number) {
-    // Remove existing popup if any
+    // Ensure no previous popup is shown
     if (this.popup) {
       this.popup.destroy();
     }
@@ -33,7 +33,7 @@ export default class LevelUpPopup {
     this.popup.add(box);
 
     // Text
-    const levelUpText = this.scene.add.text(150, 40, `Level Up!`, {
+    const levelUpText = this.scene.add.text(150, 40, `Level Up! Level ${level}`, {
       fontSize: '24px',
       fontFamily: 'Roboto, sans-serif',
       color: '#ffffff',
