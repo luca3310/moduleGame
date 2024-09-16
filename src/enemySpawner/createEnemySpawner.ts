@@ -39,6 +39,9 @@ export default function createEnemySpawner() {
 
       // Optionally, center the physics body if it's larger than the sprite
       enemy.setOffset((40 - bodyWidth) / 2, (40 - bodyHeight) / 2); // Adjust the offset to center the body
+
+      // Assign health to the enemy
+      enemy.health = 3; // Each enemy starts with 3 health points
     },
   });
 }

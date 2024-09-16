@@ -45,29 +45,27 @@ class MyGame extends Phaser.Scene {
     // Enable bullet collision with enemies
     bulletCollision.call(this);
 
-    // Handle bullet spawning on pointer down
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      spawnBullet.call(this, pointer);
-    });
-
     // Create the level bar background and the dynamic bar
     this.levelBarBackground = this.add.graphics();
     this.levelBarBackground.fillStyle(0x444444, 1); // Gray color
     this.levelBarBackground.fillRect(10, 40, this.cameras.main.width - 20, 20); // Position and size
     this.levelBarBackground.setScrollFactor(0); // Ensures bar stays on screen
-    
+
     this.levelBar = this.add.graphics();
     this.levelBar.fillStyle(0x0000ff, 1); // Blue color
     this.levelBar.fillRect(10, 40, this.cameras.main.width - 20, 20); // Initial size (full)
     this.levelBar.setScrollFactor(0); // Ensures bar stays on screen
 
-
-
     // Create level text inside the bar
-    this.levelTextInsideBar = this.add.text(this.cameras.main.width / 2, 45, `Level: 1`, {
-      fontSize: "18px",
-      align: "center",
-    });
+    this.levelTextInsideBar = this.add.text(
+      this.cameras.main.width / 2,
+      45,
+      `Level: 1`,
+      {
+        fontSize: "18px",
+        align: "center",
+      },
+    );
     this.levelTextInsideBar.setOrigin(0.5, 0.5); // Center text in the bar
     this.levelTextInsideBar.setScrollFactor(0); // Ensures text stays on screen
   }
@@ -85,18 +83,23 @@ class MyGame extends Phaser.Scene {
     // Update the dynamic level bar width to reflect XP progress
     this.levelBar.clear(); // Clear previous bar rendering
     this.levelBar.fillStyle(0x0000ff, 1); // Blue color for the bar
-    this.levelBar.fillRect(10, 40, (this.cameras.main.width - 20) * xpProgress, 20); // Scale based on XP
+    this.levelBar.fillRect(
+      10,
+      40,
+      (this.cameras.main.width - 20) * xpProgress,
+      20,
+    ); // Scale based on XP
     this.levelBar.setScrollFactor(0); // Ensures bar stays on screen
 
-            // Check if left mouse button is held down and fire bullets continuously
-            if (this.leftMouseButton.isDown) {
-              const fireRate = 200; // Time in ms between each bullet
-        
-              if (time > this.lastFired) {
-                spawnBullet.call(this, this.leftMouseButton);
-                this.lastFired = time + fireRate; // Delay the next bullet
-              }
-            }
+    // Check if left mouse button is held down and fire bullets continuously
+    if (this.leftMouseButton.isDown) {
+      const fireRate = 200; // Time in ms between each bullet
+
+      if (time > this.lastFired) {
+        spawnBullet.call(this, this.leftMouseButton);
+        this.lastFired = time + fireRate; // Delay the next bullet
+      }
+    }
   }
 }
 
