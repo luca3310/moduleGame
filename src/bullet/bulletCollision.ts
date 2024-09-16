@@ -1,13 +1,10 @@
-import levelUp from "src/player/levelUp";
-
 export default function bulletCollision() {
   this.physics.add.overlap(
     this.bullets,
     this.enemies,
     (bullet: any, enemy: any) => {
-      bullet.setActive(false);
-      bullet.setVisible(false);
       enemy.destroy();
+      bullet.destroy();
 
       this.player.xp += 10;
 

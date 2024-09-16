@@ -13,9 +13,11 @@ import bulletCollision from "./bullet/bulletCollision";
 class MyGame extends Phaser.Scene {
   private player!: any;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
+  private leftMouseButton!: Phaser.Input.Pointer; // Added mouse button reference
   private enemies!: Phaser.GameObjects.Group;
   private levelText!: Phaser.GameObjects.Text; // Text to display player level
 
+  private lastFired: number = 0; // Track time between bullets
   constructor() {
     super({ key: "MyGame" });
   }
@@ -40,17 +42,23 @@ class MyGame extends Phaser.Scene {
 
     // Enable bullet collision with enemies
     bulletCollision.call(this);
-
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      spawnBullet.call(this, pointer);
-    });
   }
 
-  update(): void {
+  update(time: number, delta: number): void {
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this, Phaser);
 
     this.levelText.setText(`Level: ${this.player.level}`);
+
+    // Check if left mouse button is held down and fire bullets continuously
+    if (this.leftMouseButton.isDown) {
+      const fireRate = 200; // Time in ms between each bullet
+
+      if (time > this.lastFired) {
+        spawnBullet.call(this, this.leftMouseButton);
+        this.lastFired = time + fireRate; // Delay the next bullet
+      }
+    }
   }
 }
 

@@ -5,4 +5,5 @@ export default function keybinds(Phaser: any) {
     S: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
     D: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
   };
+  this.leftMouseButton = this.input.activePointer;
 }
