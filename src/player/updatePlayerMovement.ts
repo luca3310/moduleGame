@@ -1,8 +1,9 @@
 export default function updatePlayerMovement() {
-  const speed = 160;
-  let isMoving = false;
+  const speed = 160;  // Ændret til 160 for at matche farten med physics
 
-  // Bevægelser på Y-aksen (op/ned)
+  let isMoving = false;  // Variabel til at tjekke, om spilleren bevæger sig
+
+  // Bevægelse op/ned
   if (this.wasdKeys.W.isDown) {
     this.player.setVelocityY(-speed);
     isMoving = true;
@@ -10,28 +11,26 @@ export default function updatePlayerMovement() {
     this.player.setVelocityY(speed);
     isMoving = true;
   } else {
-    this.player.setVelocityY(0); // Stop bevægelse på Y-aksen
+    this.player.setVelocityY(0);  // Stop bevægelse på Y-aksen
   }
 
-  // Bevægelser på X-aksen (venstre/højre)
+  // Bevægelse venstre/højre
   if (this.wasdKeys.A.isDown) {
     this.player.setVelocityX(-speed);
+    this.player.setFlipX(true);  // Spejlvend til venstre
     isMoving = true;
   } else if (this.wasdKeys.D.isDown) {
     this.player.setVelocityX(speed);
+    this.player.setFlipX(false);  // Normalt billede til højre
     isMoving = true;
   } else {
-    this.player.setVelocityX(0); // Stop bevægelse på X-aksen
+    this.player.setVelocityX(0);  // Stop bevægelse på X-aksen
   }
 
-  // Afspil 'walk' animationen, hvis spilleren bevæger sig
+  // Afspil animation, hvis spilleren bevæger sig
   if (isMoving) {
-    if (!this.player.anims.isPlaying || this.player.anims.currentAnim.key !== 'walk') {
-      this.player.anims.play('walk');
-    }
+    this.player.anims.play('walk', true);
   } else {
-    // Stop animationen og vis stående billede
-    this.player.anims.stop();
-    this.player.setTexture('playerStand');
+    this.player.setTexture('playerStand');  // Stå stille, når ikke bevæger sig
   }
 }
