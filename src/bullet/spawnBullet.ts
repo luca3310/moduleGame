@@ -5,9 +5,6 @@ export default function spawnBullet(pointer: Phaser.Input.Pointer) {
   const bullet = this.bullets.get(this.player.x, this.player.y, "bullet");
 
   if (bullet) {
-    bullet.setActive(true);
-    bullet.setVisible(true);
-
     // Calculate the direction from player to cursor
     const direction = new Phaser.Math.Vector2(
       pointer.worldX - this.player.x,
@@ -19,8 +16,7 @@ export default function spawnBullet(pointer: Phaser.Input.Pointer) {
 
     // Bullet should be destroyed after 3 seconds if it doesn't hit anything
     this.time.delayedCall(3000, () => {
-      bullet.setActive(false);
-      bullet.setVisible(false);
+      bullet.destroy();
     });
   }
 }

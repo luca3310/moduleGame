@@ -13,11 +13,13 @@ import bulletCollision from "./bullet/bulletCollision";
 class MyGame extends Phaser.Scene {
   private player!: any;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
+  private leftMouseButton!: Phaser.Input.Pointer; // Added mouse button reference
   private enemies!: Phaser.GameObjects.Group;
   private levelBarBackground!: Phaser.GameObjects.Graphics; // Background of the level bar
   private levelBar!: Phaser.GameObjects.Graphics; // Dynamic level bar
   private levelTextInsideBar!: Phaser.GameObjects.Text; // Text inside the bar
 
+  private lastFired: number = 0; // Track time between bullets
   constructor() {
     super({ key: "MyGame" });
   }
@@ -59,6 +61,8 @@ class MyGame extends Phaser.Scene {
     this.levelBar.fillRect(10, 40, this.cameras.main.width - 20, 20); // Initial size (full)
     this.levelBar.setScrollFactor(0); // Ensures bar stays on screen
 
+
+
     // Create level text inside the bar
     this.levelTextInsideBar = this.add.text(this.cameras.main.width / 2, 45, `Level: 1`, {
       fontSize: "18px",
@@ -68,7 +72,7 @@ class MyGame extends Phaser.Scene {
     this.levelTextInsideBar.setScrollFactor(0); // Ensures text stays on screen
   }
 
-  update(): void {
+  update(time: number, delta: number): void {
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this, Phaser);
 
@@ -83,6 +87,16 @@ class MyGame extends Phaser.Scene {
     this.levelBar.fillStyle(0x0000ff, 1); // Blue color for the bar
     this.levelBar.fillRect(10, 40, (this.cameras.main.width - 20) * xpProgress, 20); // Scale based on XP
     this.levelBar.setScrollFactor(0); // Ensures bar stays on screen
+
+            // Check if left mouse button is held down and fire bullets continuously
+            if (this.leftMouseButton.isDown) {
+              const fireRate = 200; // Time in ms between each bullet
+        
+              if (time > this.lastFired) {
+                spawnBullet.call(this, this.leftMouseButton);
+                this.lastFired = time + fireRate; // Delay the next bullet
+              }
+            }
   }
 }
 
