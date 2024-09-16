@@ -9,8 +9,8 @@ import createEnemy from "./enemy/createEnemy";
 import createBullet from "./bullet/createBullet";
 import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
-import LevelBar  from "./ui/LevelBar" 
-import ReloadBar  from "./ui/ReloadBar" 
+import LevelBar from "./ui/LevelBar";
+import ReloadBar from "./ui/ReloadBar";
 
 class MyGame extends Phaser.Scene {
   private player!: any;
@@ -27,7 +27,12 @@ class MyGame extends Phaser.Scene {
     super({ key: "MyGame" });
   }
 
-  preload(): void {}
+  preload(): void {
+    // Preload assets
+    this.load.image('playerStand', 'assets/player_stand.png');
+    this.load.image('playerWalk1', 'assets/player_walk1.png');
+    this.load.image('playerWalk2', 'assets/player_walk2.png');
+  }
 
   create(): void {
     const centerX = this.cameras.main.width / 2;
@@ -46,17 +51,23 @@ class MyGame extends Phaser.Scene {
 
     this.reloadBar = new ReloadBar(this);
     this.reloadBar.create();
+
+    // Initialiser mus pointer
+    this.leftMouseButton = this.input.activePointer;
   }
 
   update(time: number, delta: number): void {
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this, Phaser);
 
+    // Opdater level bar og XP
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
 
+    // Opdater reload bar
     this.reloadBar.update();
 
+    // Håndter skydning
     if (!this.reloadBar.getReloadingStatus() && this.leftMouseButton.isDown) {
       if (time > this.lastFired) {
         spawnBullet.call(this, this.leftMouseButton);
@@ -68,6 +79,7 @@ class MyGame extends Phaser.Scene {
   }
 }
 
+// Konfigurationen af Phaser spillet
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: window.innerWidth,
@@ -83,4 +95,5 @@ const config: Phaser.Types.Core.GameConfig = {
   scene: MyGame,
 };
 
+// Initialiser Phaser spillet
 new Phaser.Game(config);
