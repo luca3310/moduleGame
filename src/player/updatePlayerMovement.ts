@@ -1,5 +1,5 @@
 export default function updatePlayerMovement() {
-  const speed = 6;
+  const speed = 2;
 
   if (this.wasdKeys.W.isDown) {
     this.player.y -= speed;

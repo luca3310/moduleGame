@@ -9,17 +9,20 @@ import createEnemy from "./enemy/createEnemy";
 import createBullet from "./bullet/createBullet";
 import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
+import LevelBar  from "./ui/LevelBar" 
+import ReloadBar  from "./ui/ReloadBar" 
 
 class MyGame extends Phaser.Scene {
   private player!: any;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
-  private leftMouseButton!: Phaser.Input.Pointer; // Added mouse button reference
+  private leftMouseButton!: Phaser.Input.Pointer;
   private enemies!: Phaser.GameObjects.Group;
-  private levelBarBackground!: Phaser.GameObjects.Graphics; // Background of the level bar
-  private levelBar!: Phaser.GameObjects.Graphics; // Dynamic level bar
-  private levelTextInsideBar!: Phaser.GameObjects.Text; // Text inside the bar
+  private levelBar!: LevelBar;
+  private reloadBar!: ReloadBar;
 
-  private lastFired: number = 0; // Track time between bullets
+  private lastFired: number = 0;
+  private fireRate: number = 1000;
+
   constructor() {
     super({ key: "MyGame" });
   }
@@ -31,72 +34,37 @@ class MyGame extends Phaser.Scene {
     const centerY = this.cameras.main.height / 2;
 
     createPlayer.call(this, centerX, centerY);
-
     createCamera.call(this);
-
     keybinds.call(this, Phaser);
-
     createEnemy.call(this);
     createEnemySpawner.call(this);
-
-    // Create bullets
     createBullet.call(this);
-
-    // Enable bullet collision with enemies
     bulletCollision.call(this);
 
-    // Handle bullet spawning on pointer down
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      spawnBullet.call(this, pointer);
-    });
+    this.levelBar = new LevelBar(this);
+    this.levelBar.create();
 
-    // Create the level bar background and the dynamic bar
-    this.levelBarBackground = this.add.graphics();
-    this.levelBarBackground.fillStyle(0x444444, 1); // Gray color
-    this.levelBarBackground.fillRect(10, 40, this.cameras.main.width - 20, 20); // Position and size
-    this.levelBarBackground.setScrollFactor(0); // Ensures bar stays on screen
-    
-    this.levelBar = this.add.graphics();
-    this.levelBar.fillStyle(0x0000ff, 1); // Blue color
-    this.levelBar.fillRect(10, 40, this.cameras.main.width - 20, 20); // Initial size (full)
-    this.levelBar.setScrollFactor(0); // Ensures bar stays on screen
-
-
-
-    // Create level text inside the bar
-    this.levelTextInsideBar = this.add.text(this.cameras.main.width / 2, 45, `Level: 1`, {
-      fontSize: "18px",
-      align: "center",
-    });
-    this.levelTextInsideBar.setOrigin(0.5, 0.5); // Center text in the bar
-    this.levelTextInsideBar.setScrollFactor(0); // Ensures text stays on screen
+    this.reloadBar = new ReloadBar(this);
+    this.reloadBar.create();
   }
 
   update(time: number, delta: number): void {
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this, Phaser);
 
-    // Update level text
-    this.levelTextInsideBar.setText(`Level: ${this.player.level}`);
+    this.levelBar.updateLevel(this.player.level);
+    this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
 
-    // Calculate XP progress as a percentage
-    const xpProgress = this.player.xp / this.player.xpToNextLevel;
+    this.reloadBar.update();
 
-    // Update the dynamic level bar width to reflect XP progress
-    this.levelBar.clear(); // Clear previous bar rendering
-    this.levelBar.fillStyle(0x0000ff, 1); // Blue color for the bar
-    this.levelBar.fillRect(10, 40, (this.cameras.main.width - 20) * xpProgress, 20); // Scale based on XP
-    this.levelBar.setScrollFactor(0); // Ensures bar stays on screen
-
-            // Check if left mouse button is held down and fire bullets continuously
-            if (this.leftMouseButton.isDown) {
-              const fireRate = 200; // Time in ms between each bullet
-        
-              if (time > this.lastFired) {
-                spawnBullet.call(this, this.leftMouseButton);
-                this.lastFired = time + fireRate; // Delay the next bullet
-              }
-            }
+    if (!this.reloadBar.getReloadingStatus() && this.leftMouseButton.isDown) {
+      if (time > this.lastFired) {
+        spawnBullet.call(this, this.leftMouseButton);
+        this.lastFired = time + this.fireRate;
+        this.reloadBar.startReload();
+        console.log('Shot fired. Starting reload...');
+      }
+    }
   }
 }
 
