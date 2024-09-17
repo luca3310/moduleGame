@@ -38,8 +38,7 @@ export default class MainMenu extends Phaser.Scene {
     startGameText.setInteractive();
     startGameText.on("pointerdown", () => {
       // Switch to the MyGame scene when "Start Game" is clicked
-      this.scene.stop("MainMenu");
-      this.scene.launch("MyGame");
+      this.scene.start("MyGame");
     });
   }
 }
