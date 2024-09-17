@@ -1,18 +1,12 @@
-// bulletCollision.ts
-import { PlayerWithStats } from "../player/PlayerStats"; // Opdateret sti til PlayerStats
-
 export default function bulletCollision() {
   this.physics.add.overlap(
     this.bullets,
     this.enemies,
     (bullet: any, enemy: any) => {
-      // Destroy the bullet on hit
       bullet.destroy();
+      enemy.health -= 1;
 
-      // Reduce enemy health
-      enemy.health -= this.player.stats.damage; // Brug spillerens skade fra stats
-
-      const damageText = this.add.text(0, 0, `-${this.player.stats.damage}`, {
+      const damageText = this.add.text(0, 0, `-${1}`, {
         font: "30px Arial",
         fill: "#ffff00",
         stroke: "#000000",
@@ -42,24 +36,21 @@ export default function bulletCollision() {
       });
 
       if (enemy.health <= 0) {
-        // Destroy the enemy if health is 0 or below
         enemy.destroy();
+        this.events.emit('enemyKilled');
 
-        // Opdater killCounter her
-        this.killCounter.incrementKillCount(); // Tilføjet opdatering af kill counter
-
-        // Add XP to the player
         this.player.xp += 10;
 
-        // Level up logic
         if (this.player.xp >= this.player.xpToNextLevel) {
           this.player.level += 1;
           this.player.xp -= this.player.xpToNextLevel;
           this.player.xpToNextLevel = Math.floor(
-            this.player.xpToNextLevel * 1.5
-            );
-            }
-            }
-            }
-            );
-            }
+            this.player.xpToNextLevel * 1.5,
+          );
+        }
+
+        this.incrementKillCount(); // Opdater kill counteren her
+      }
+    },
+  );
+}
