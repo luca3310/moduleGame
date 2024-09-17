@@ -1,6 +1,7 @@
 import Phaser from "phaser";
-import MainMenu from "./mainMenu";
 import MyGame from "./myGame";
+import MainMenu from "./mainMenu";
+import PauseMenu from "./PauseMenu";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -14,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [MainMenu, MyGame], // Add both the MainMenu and MyGame scenes
+  scene: [MainMenu, MyGame, PauseMenu], 
 };
 
 new Phaser.Game(config);

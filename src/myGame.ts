@@ -11,7 +11,7 @@ import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
-import KillCounter from "./ui/KillCounter"; // Importer KillCounter klassen
+import PauseMenu from "./PauseMenu";
 
 // Udvid Phaser's sprite med ekstra egenskaber for level og XP
 type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
@@ -28,11 +28,9 @@ export default class MyGame extends Phaser.Scene {
   private enemies!: Phaser.GameObjects.Group;
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
-  private killCounter!: KillCounter; // Tilføj KillCounter instans
-
+  private isPaused: boolean = false;
   private lastFired: number = 0;
   private fireRate: number = 1000;
-  private kills: number = 0;
 
   constructor() {
     super({ key: "MyGame" });
@@ -61,35 +59,33 @@ export default class MyGame extends Phaser.Scene {
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
     this.player.levelUp = false;
-
     createCamera.call(this);
     keybinds.call(this, Phaser);
     createEnemy.call(this);
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
+    this.togglePause()
+    // Tilføj tastetryk til pausemenu
+    this.input.keyboard.on("keydown-ESC", () => this.togglePause());
+    this.input.keyboard.on("keydown-P", () => this.togglePause());
 
     // Opret level bar
     this.levelBar = new LevelBar(this);
     this.levelBar.create();
 
     // Beregn positionen for KillCounter baseret på LevelBar's position og størrelse
-    const levelBarHeight = this.levelBar.getHeight(); // Forudsat at du har en metode til at få højden
-    const killCounterY = this.levelBar.getY() + levelBarHeight + 10; // 10 pixels margin
+    const levelBarHeight = this.levelBar.getHeight(); // Forudsat at du har en metode til at få højde
 
     // Opret reload bar
     this.reloadBar = new ReloadBar(this);
     this.reloadBar.create();
-
-    // Opret kill counter og placér den under level bar
-    this.killCounter = new KillCounter(this);
-    this.killCounter.setPosition(10, killCounterY); // Sæt positionen for KillCounter
-
+    
     this.leftMouseButton = this.input.activePointer;
-    this.events.on("enemyKilled", this.updateKillCounter, this);
   }
 
   update(time: number, delta: number): void {
+    if (this.isPaused) return;
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this);
 
@@ -114,9 +110,31 @@ export default class MyGame extends Phaser.Scene {
     }
   }
 
-  private updateKillCounter(): void {
-    this.kills += 1;
-    this.killCounter.updateKills(this.kills); // Opdater kill counter
+
+  public togglePause(): void {
+    if (this.isPaused) {
+      console.log("Resuming game and stopping pause menu");
+      this.scene.resume("MyGame");
+      this.scene.stop("PauseMenu");
+      this.isPaused = false;
+    } else {
+      console.log("Pausing game and launching pause menu");
+      this.scene.pause("MyGame");
+      this.scene.launch("PauseMenu");
+      this.isPaused = true;
+    }
+  }
+  public resetGame(): void {
+    // Nulstil kill counter
+    
+    // Nulstil spillerens status
+    this.player.level = 1;
+    this.player.xp = 0;
+    this.player.xpToNextLevel = 100;
+    this.levelBar.updateLevel(this.player.level);
+    this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
+    
+    // Nulstil andre nødvendige elementer som reloadBar
+    this.reloadBar.reset();
   }
 }
-

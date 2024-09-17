@@ -1,6 +1,9 @@
 import Phaser from "phaser";
 
 export default class ReloadBar {
+  reset() {
+    throw new Error("Method not implemented.");
+  }
   private reloadBarBackground!: Phaser.GameObjects.Graphics;
   private reloadBar!: Phaser.GameObjects.Graphics;
   private isReloading: boolean = false;
