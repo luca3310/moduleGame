@@ -1,4 +1,5 @@
 // MyGame.ts
+// MyGame.ts
 import Phaser from "phaser";
 import createPlayer from "./player/createPlayer";
 import updatePlayerMovement from "./player/updatePlayerMovement";
@@ -12,18 +13,32 @@ import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
-import Timer from './ui/Timer';
-import KillCounter from './ui/KillCounter';
-import { PlayerWithStats } from "./player/PlayerStats"; // Opdateret sti til PlayerStats
+import HealthBar from "./ui/HealthBar";
+import PauseMenu from "./PauseMenu";
+
+type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
+  level: number;
+  xp: number;
+  xpToNextLevel: number;
+  levelUp: boolean;
+  health?: number;
+};
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
+  private isDashing: boolean = false;
+  private dashEndTime: number = 0;
+  private dashCooldownEnd: number = 0;
+  private dashCooldownBar!: Phaser.GameObjects.Graphics;
+  private dashCooldownMaxWidth: number = 100;
+  private dashCooldownHeight: number = 5;
   private enemies!: Phaser.GameObjects.Group;
   private bullets!: Phaser.GameObjects.Group; // Tilføj bullets her
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
+  private healthBar!: HealthBar;
   private isPaused: boolean = false;
   private lastFired: number = 0;
   private fireRate: number = 1000;
@@ -36,7 +51,6 @@ export default class MyGame extends Phaser.Scene {
   }
 
   preload(): void {
-    // Preload assets med de korrekte filnavne
     this.load.image("playerStand", "assets/Player/player_stand.png");
     this.load.image("playerWalk1", "assets/Player/player_walk1.png");
     this.load.image("playerWalk2", "assets/Player/player_walk2.png");
@@ -76,23 +90,28 @@ export default class MyGame extends Phaser.Scene {
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
-    // Tilføj tastetryk til pausemenu
+
     this.input.keyboard.on("keydown-ESC", () => this.togglePause());
     this.input.keyboard.on("keydown-P", () => this.togglePause());
 
     // Opret level bar og reload bar
     this.levelBar = new LevelBar(this);
     this.levelBar.create();
+
     this.reloadBar = new ReloadBar(this);
     this.reloadBar.create();
 
+    this.healthBar = new HealthBar(this, this.player);
+    this.healthBar.create();
+
+
     this.leftMouseButton = this.input.activePointer;
-    this.timer = new Timer(this);
-    this.killCounter = new KillCounter(this);
+    this.dashCooldownBar = this.add.graphics();
   }
 
   update(time: number, delta: number): void {
     if (this.isPaused) return;
+
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this);
 
@@ -108,6 +127,7 @@ export default class MyGame extends Phaser.Scene {
 
     this.reloadBar.update();
     this.timer.update(delta);
+    this.healthBar.update(); // Opdater healthbar position
 
     if (!this.reloadBar.getReloadingStatus() && this.leftMouseButton.isDown) {
       if (time > this.lastFired) {
@@ -116,6 +136,8 @@ export default class MyGame extends Phaser.Scene {
         this.reloadBar.startReload();
       }
     }
+
+    this.updateDashCooldownBar(time);
   }
 
   public togglePause(): void {
@@ -133,7 +155,6 @@ export default class MyGame extends Phaser.Scene {
   }
 
   public resetGame(): void {
-    // Nulstil spillerens status
     this.player.level = 1;
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
