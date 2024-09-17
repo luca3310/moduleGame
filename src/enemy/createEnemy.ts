@@ -27,7 +27,6 @@ export default function createEnemy() {
     this.player,
     this.enemies,
     (player: any, enemy: any) => {
-      window.close();
     },
   );
 }
