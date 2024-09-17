@@ -25,7 +25,7 @@ export default class ReloadBar {
     this.reloadBar.fillStyle(0x00ff00, 1);
     this.reloadBar.fillRect(10, height - 30, 0, 20);
     this.reloadBar.setScrollFactor(0);
-    this.reloadBar.setDepth(2); // Set depth for reload bar
+    this.reloadBar.setDepth(1); // Set depth for reload bar
   }
 
   startReload() {

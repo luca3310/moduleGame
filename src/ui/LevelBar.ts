@@ -20,14 +20,14 @@ export default class LevelBar {
     this.levelBarBackground.fillStyle(0x333333, 1);
     this.levelBarBackground.fillRect(barX, this.barY, barWidth, this.barHeight);
     this.levelBarBackground.setScrollFactor(0);
-    this.levelBarBackground.setDepth(1); // Set depth for background
+    this.levelBarBackground.setDepth(0); // Set depth for background
 
     // Level bar with modern gradient
     this.levelBar = this.scene.add.graphics();
     this.levelBar.fillStyle(0x1e90ff, 1); // Modern blue color
     this.levelBar.fillRect(barX, this.barY, barWidth, this.barHeight);
     this.levelBar.setScrollFactor(0);
-    this.levelBar.setDepth(2); // Set depth for level bar
+    this.levelBar.setDepth(0); // Set depth for level bar
 
     // Level text with a sleek font
     this.levelTextInsideBar = this.scene.add.text(barX + barWidth - 10, this.barY + this.barHeight / 2, `Level: 1`, {
@@ -40,7 +40,7 @@ export default class LevelBar {
     });
     this.levelTextInsideBar.setOrigin(1, 0.5);
     this.levelTextInsideBar.setScrollFactor(0);
-    this.levelTextInsideBar.setDepth(3); // Set depth for level text
+    this.levelTextInsideBar.setDepth(0); // Set depth for level text
 
     // XP text in the center with modern font
     this.xpText = this.scene.add.text(barX + barWidth / 2, this.barY + this.barHeight / 2, `XP: 0 / 100`, {
@@ -53,7 +53,7 @@ export default class LevelBar {
     });
     this.xpText.setOrigin(0.5, 0.5); // Center the text
     this.xpText.setScrollFactor(0);
-    this.xpText.setDepth(3); // Set depth for XP text
+    this.xpText.setDepth(1); // Set depth for XP text
   }
 
   getY(): number {

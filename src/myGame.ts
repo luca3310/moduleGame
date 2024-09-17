@@ -1,3 +1,4 @@
+// MyGame.ts
 import Phaser from "phaser";
 import createPlayer from "./player/createPlayer";
 import updatePlayerMovement from "./player/updatePlayerMovement";
@@ -11,26 +12,24 @@ import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
-import PauseMenu from "./PauseMenu";
-
-// Udvid Phaser's sprite med ekstra egenskaber for level og XP
-type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
-  level: number;
-  xp: number;
-  xpToNextLevel: number;
-  levelUp: boolean; // Tilføjet levelUp-flag
-};
+import Timer from './ui/Timer';
+import KillCounter from './ui/KillCounter';
+import { PlayerWithStats } from "./player/PlayerStats"; // Opdateret sti til PlayerStats
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
   private enemies!: Phaser.GameObjects.Group;
+  private bullets!: Phaser.GameObjects.Group; // Tilføj bullets her
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
   private isPaused: boolean = false;
   private lastFired: number = 0;
   private fireRate: number = 1000;
+  private timer!: Timer;
+  private killCounter!: KillCounter;
+
 
   constructor() {
     super({ key: "MyGame" });
@@ -42,7 +41,6 @@ export default class MyGame extends Phaser.Scene {
     this.load.image("playerWalk1", "assets/Player/player_walk1.png");
     this.load.image("playerWalk2", "assets/Player/player_walk2.png");
     this.load.image("bullet", "assets/weapons/rock.png");
-
     // Ændret fra 'enemy' til 'zombie' for at matche filnavne
     this.load.image("enemyStand", "assets/Enemy/zombie_stand.png");
     this.load.image("enemyWalk1", "assets/Enemy/zombie_walk1.png");
@@ -53,12 +51,25 @@ export default class MyGame extends Phaser.Scene {
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2;
 
+    // Opret bullets-gruppen
+    this.bullets = this.add.group({
+      classType: Phaser.Physics.Arcade.Sprite,
+      runChildUpdate: true, // Giver mulighed for at opdatere hvert bullet
+    });
+
     createPlayer.call(this, centerX, centerY);
     this.player = this.player as PlayerWithStats;
     this.player.level = 1;
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
     this.player.levelUp = false;
+    this.player.stats = { // Initialiser stats
+      health: 100,
+      damage: 1,
+      fireRate: 1000,
+      speed: 160,
+    };
+
     createCamera.call(this);
     keybinds.call(this, Phaser);
     createEnemy.call(this);
@@ -69,18 +80,15 @@ export default class MyGame extends Phaser.Scene {
     this.input.keyboard.on("keydown-ESC", () => this.togglePause());
     this.input.keyboard.on("keydown-P", () => this.togglePause());
 
-    // Opret level bar
+    // Opret level bar og reload bar
     this.levelBar = new LevelBar(this);
     this.levelBar.create();
-
-    // Beregn positionen for KillCounter baseret på LevelBar's position og størrelse
-    const levelBarHeight = this.levelBar.getHeight(); // Forudsat at du har en metode til at få højde
-
-    // Opret reload bar
     this.reloadBar = new ReloadBar(this);
     this.reloadBar.create();
-    
+
     this.leftMouseButton = this.input.activePointer;
+    this.timer = new Timer(this);
+    this.killCounter = new KillCounter(this);
   }
 
   update(time: number, delta: number): void {
@@ -99,6 +107,7 @@ export default class MyGame extends Phaser.Scene {
     }
 
     this.reloadBar.update();
+    this.timer.update(delta);
 
     if (!this.reloadBar.getReloadingStatus() && this.leftMouseButton.isDown) {
       if (time > this.lastFired) {
@@ -108,7 +117,6 @@ export default class MyGame extends Phaser.Scene {
       }
     }
   }
-
 
   public togglePause(): void {
     if (this.isPaused) {
@@ -123,15 +131,38 @@ export default class MyGame extends Phaser.Scene {
       this.isPaused = true;
     }
   }
+
   public resetGame(): void {
     // Nulstil spillerens status
     this.player.level = 1;
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
+    this.player.stats = { // Nulstil stats
+      health: 100,
+      damage: 1,
+      fireRate: 1000,
+      speed: 160,
+    };
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
-    
+
+    // Nulstil fjender og kugler
+    if (this.enemies) {
+      this.enemies.clear(true, true); // Fjerner alle fjender fra scenen og gruppen
+    }
+
+    if (this.bullets) {
+      this.bullets.clear(true, true); // Fjerner alle kugler fra scenen og gruppen
+    }
+
     // Nulstil andre nødvendige elementer som reloadBar
     this.reloadBar.reset();
+  }
+
+  updatePlayerStats(statName: string, value: number): void {
+    if (this.player.stats.hasOwnProperty(statName)) {
+      this.player.stats[statName] = value;
+      this.events.emit('statsChanged', this.player.stats); // Informer PauseMenu
+    }
   }
 }

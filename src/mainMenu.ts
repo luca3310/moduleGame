@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import MyGame from "./myGame";
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {
@@ -6,11 +7,10 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   preload(): void {
-    // Optionally, load any assets for the menu (e.g., background images)
+    // Eventuelt, load assets til menuen her
   }
 
   create(): void {
-    // Add the main menu title
     const titleText = this.add.text(
       this.cameras.main.width / 2,
       this.cameras.main.height / 2 - 100,
@@ -18,11 +18,10 @@ export default class MainMenu extends Phaser.Scene {
       {
         fontSize: "48px",
         color: "#ffffff",
-      },
+      }
     );
     titleText.setOrigin(0.5);
 
-    // Add a "Start Game" button or text
     const startGameText = this.add.text(
       this.cameras.main.width / 2,
       this.cameras.main.height / 2,
@@ -30,15 +29,22 @@ export default class MainMenu extends Phaser.Scene {
       {
         fontSize: "32px",
         color: "#00ff00",
-      },
+      }
     );
     startGameText.setOrigin(0.5);
 
-    // Make the text interactive (clickable)
     startGameText.setInteractive();
     startGameText.on("pointerdown", () => {
-      // Switch to the MyGame scene when "Start Game" is clicked
-      this.scene.start("MyGame");
+      // Fjern den eksisterende MyGame-scene, hvis den findes
+      if (this.scene.get("MyGame")) {
+        this.scene.stop("MyGame");
+        this.scene.remove("MyGame");
+      }
+
+      // Opret en ny instans af MyGame og start den
+      const newGame = new MyGame();  
+      this.scene.add("MyGame", newGame);
+      this.scene.start("MyGame"); // Start MyGame scenen
     });
   }
 }

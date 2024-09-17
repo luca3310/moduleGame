@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import MyGame from "./myGame";
 import MainMenu from "./mainMenu";
+import MyGame from "./myGame";
 import PauseMenu from "./PauseMenu";
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -15,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [MainMenu, MyGame, PauseMenu], 
+  scene: [MainMenu, MyGame, PauseMenu], // Tilføj alle scener her
 };
 
 new Phaser.Game(config);

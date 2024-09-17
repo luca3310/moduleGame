@@ -20,7 +20,7 @@ const createWindow = () => {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     mainWindow.loadFile(
-      path.join(__dirname, `../index/${MAIN_WINDOW_VITE_NAME}/index.html`),
+      path.join(__dirname, `../mainMenu/${MAIN_WINDOW_VITE_NAME}/index.html`),
     );
   }
 
