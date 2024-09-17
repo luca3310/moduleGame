@@ -1,3 +1,4 @@
+// MyGame.ts
 import Phaser from "phaser";
 import createPlayer from "./player/createPlayer";
 import updatePlayerMovement from "./player/updatePlayerMovement";
@@ -11,29 +12,31 @@ import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
+import HealthBar from "./ui/HealthBar";
 import PauseMenu from "./PauseMenu";
 
-// Udvid Phaser's sprite med ekstra egenskaber for level og XP
 type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
   level: number;
   xp: number;
   xpToNextLevel: number;
-  levelUp: boolean; // Tilføjet levelUp-flag
+  levelUp: boolean;
+  health?: number;
 };
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
-  private isDashing: boolean = false; // To track dash state
-  private dashEndTime: number = 0; // When the dash should end
-  private dashCooldownEnd: number = 0; // When the player can dash again
-  private dashCooldownBar!: Phaser.GameObjects.Graphics; // The dash cooldown bar
-  private dashCooldownMaxWidth: number = 100; // Max width of the cooldown bar
-  private dashCooldownHeight: number = 5; // Height of the cooldown bar
+  private isDashing: boolean = false;
+  private dashEndTime: number = 0;
+  private dashCooldownEnd: number = 0;
+  private dashCooldownBar!: Phaser.GameObjects.Graphics;
+  private dashCooldownMaxWidth: number = 100;
+  private dashCooldownHeight: number = 5;
   private enemies!: Phaser.GameObjects.Group;
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
+  private healthBar!: HealthBar;
   private isPaused: boolean = false;
   private lastFired: number = 0;
   private fireRate: number = 1000;
@@ -43,13 +46,10 @@ export default class MyGame extends Phaser.Scene {
   }
 
   preload(): void {
-    // Preload assets med de korrekte filnavne
     this.load.image("playerStand", "assets/Player/player_stand.png");
     this.load.image("playerWalk1", "assets/Player/player_walk1.png");
     this.load.image("playerWalk2", "assets/Player/player_walk2.png");
     this.load.image("bullet", "assets/weapons/rock.png");
-
-    // Ændret fra 'enemy' til 'zombie' for at matche filnavne
     this.load.image("enemyStand", "assets/Enemy/zombie_stand.png");
     this.load.image("enemyWalk1", "assets/Enemy/zombie_walk1.png");
     this.load.image("enemyWalk2", "assets/Enemy/zombie_walk2.png");
@@ -65,26 +65,26 @@ export default class MyGame extends Phaser.Scene {
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
     this.player.levelUp = false;
+    this.player.health = 100; // Initial sundhed
+
     createCamera.call(this);
     keybinds.call(this, Phaser);
     createEnemy.call(this);
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
-    // Tilføj tastetryk til pausemenu
+
     this.input.keyboard.on("keydown-ESC", () => this.togglePause());
     this.input.keyboard.on("keydown-P", () => this.togglePause());
 
-    // Opret level bar
     this.levelBar = new LevelBar(this);
     this.levelBar.create();
 
-    // Beregn positionen for KillCounter baseret på LevelBar's position og størrelse
-    const levelBarHeight = this.levelBar.getHeight(); // Forudsat at du har en metode til at få højde
-
-    // Opret reload bar
     this.reloadBar = new ReloadBar(this);
     this.reloadBar.create();
+
+    this.healthBar = new HealthBar(this, this.player);
+    this.healthBar.create();
 
     this.leftMouseButton = this.input.activePointer;
     this.dashCooldownBar = this.add.graphics();
@@ -92,6 +92,7 @@ export default class MyGame extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     if (this.isPaused) return;
+
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this);
 
@@ -106,6 +107,7 @@ export default class MyGame extends Phaser.Scene {
     }
 
     this.reloadBar.update();
+    this.healthBar.update(); // Opdater healthbar position
 
     if (!this.reloadBar.getReloadingStatus() && this.leftMouseButton.isDown) {
       if (time > this.lastFired) {
@@ -131,15 +133,16 @@ export default class MyGame extends Phaser.Scene {
       this.isPaused = true;
     }
   }
+
   public resetGame(): void {
-    // Nulstil spillerens status
     this.player.level = 1;
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
+    this.player.health = 100; // Reset health
 
-    // Nulstil andre nødvendige elementer som reloadBar
+    this.healthBar.updateHealth(this.player.health); // Reset health bar
     this.reloadBar.reset();
   }
 
@@ -147,19 +150,15 @@ export default class MyGame extends Phaser.Scene {
     const remainingCooldown = this.dashCooldownEnd - currentTime;
     const totalCooldown = this.dashCooldownEnd - this.dashEndTime;
 
-    // Clear the previous graphics
     this.dashCooldownBar.clear();
 
-    // Only draw the cooldown bar if there is still time left on cooldown
     if (remainingCooldown > 0) {
       const cooldownPercentage = remainingCooldown / totalCooldown;
       const barWidth = this.dashCooldownMaxWidth * cooldownPercentage;
 
-      // Set the position of the bar under the player
       const barX = this.player.x - this.dashCooldownMaxWidth / 2;
-      const barY = this.player.y + 40; // Adjust Y to place it under the player
+      const barY = this.player.y + 40;
 
-      // Draw the white cooldown bar
       this.dashCooldownBar.fillStyle(0xffffff, 1);
       this.dashCooldownBar.fillRect(
         barX,
