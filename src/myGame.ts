@@ -71,7 +71,6 @@ export default class MyGame extends Phaser.Scene {
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
-    this.togglePause();
     // Tilføj tastetryk til pausemenu
     this.input.keyboard.on("keydown-ESC", () => this.togglePause());
     this.input.keyboard.on("keydown-P", () => this.togglePause());
@@ -133,8 +132,6 @@ export default class MyGame extends Phaser.Scene {
     }
   }
   public resetGame(): void {
-    // Nulstil kill counter
-
     // Nulstil spillerens status
     this.player.level = 1;
     this.player.xp = 0;
