@@ -25,6 +25,12 @@ export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
+  private isDashing: boolean = false; // To track dash state
+  private dashEndTime: number = 0; // When the dash should end
+  private dashCooldownEnd: number = 0; // When the player can dash again
+  private dashCooldownBar!: Phaser.GameObjects.Graphics; // The dash cooldown bar
+  private dashCooldownMaxWidth: number = 100; // Max width of the cooldown bar
+  private dashCooldownHeight: number = 5; // Height of the cooldown bar
   private enemies!: Phaser.GameObjects.Group;
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
@@ -65,7 +71,7 @@ export default class MyGame extends Phaser.Scene {
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
-    this.togglePause()
+    this.togglePause();
     // Tilføj tastetryk til pausemenu
     this.input.keyboard.on("keydown-ESC", () => this.togglePause());
     this.input.keyboard.on("keydown-P", () => this.togglePause());
@@ -80,8 +86,9 @@ export default class MyGame extends Phaser.Scene {
     // Opret reload bar
     this.reloadBar = new ReloadBar(this);
     this.reloadBar.create();
-    
+
     this.leftMouseButton = this.input.activePointer;
+    this.dashCooldownBar = this.add.graphics();
   }
 
   update(time: number, delta: number): void {
@@ -108,8 +115,9 @@ export default class MyGame extends Phaser.Scene {
         this.reloadBar.startReload();
       }
     }
-  }
 
+    this.updateDashCooldownBar(time);
+  }
 
   public togglePause(): void {
     if (this.isPaused) {
@@ -126,15 +134,42 @@ export default class MyGame extends Phaser.Scene {
   }
   public resetGame(): void {
     // Nulstil kill counter
-    
+
     // Nulstil spillerens status
     this.player.level = 1;
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
-    
+
     // Nulstil andre nødvendige elementer som reloadBar
     this.reloadBar.reset();
+  }
+
+  private updateDashCooldownBar(currentTime: number): void {
+    const remainingCooldown = this.dashCooldownEnd - currentTime;
+    const totalCooldown = this.dashCooldownEnd - this.dashEndTime;
+
+    // Clear the previous graphics
+    this.dashCooldownBar.clear();
+
+    // Only draw the cooldown bar if there is still time left on cooldown
+    if (remainingCooldown > 0) {
+      const cooldownPercentage = remainingCooldown / totalCooldown;
+      const barWidth = this.dashCooldownMaxWidth * cooldownPercentage;
+
+      // Set the position of the bar under the player
+      const barX = this.player.x - this.dashCooldownMaxWidth / 2;
+      const barY = this.player.y + 40; // Adjust Y to place it under the player
+
+      // Draw the white cooldown bar
+      this.dashCooldownBar.fillStyle(0xffffff, 1);
+      this.dashCooldownBar.fillRect(
+        barX,
+        barY,
+        barWidth,
+        this.dashCooldownHeight,
+      );
+    }
   }
 }
