@@ -1,4 +1,3 @@
-// ui/KillCounter.ts
 import Phaser from "phaser";
 
 export default class KillCounter {
@@ -12,6 +11,7 @@ export default class KillCounter {
       color: "#ffffff",
     });
     this.killCounterText.setScrollFactor(0);
+    this.killCounterText.setDepth(3); // Set depth for kill counter
   }
 
   public updateKills(kills: number): void {
