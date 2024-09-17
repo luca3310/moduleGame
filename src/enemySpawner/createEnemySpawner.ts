@@ -1,6 +1,6 @@
 export default function createEnemySpawner() {
   this.time.addEvent({
-    delay: 2000, // Time in ms
+    delay: 3400, // Time in ms
     loop: true, // Repeat forever
     callback: () => {
       const spawnRadius = 300; // Distance around the player to spawn enemies
@@ -34,7 +34,7 @@ export default function createEnemySpawner() {
 
       // Make the enemy's physics body larger than the render
       const bodyWidth = 60; // Physics body width (bigger than the visual size)
-      const bodyHeight = 60; // Physics body height
+      const bodyHeight = 100; // Physics body height
       enemy.setSize(bodyWidth, bodyHeight);
 
       // Optionally, center the physics body if it's larger than the sprite
