@@ -11,7 +11,6 @@ import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
-import LevelUpPopup from './ui/LevelUpPopup'; // Importér LevelUpPopup
 
 // Udvid Phaser's sprite med ekstra egenskaber for level og XP
 type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
@@ -28,7 +27,6 @@ class MyGame extends Phaser.Scene {
   private enemies!: Phaser.GameObjects.Group;
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
-  private levelUpPopup!: LevelUpPopup; // Tilføj levelUpPopup
 
   private lastFired: number = 0;
   private fireRate: number = 1000;
@@ -39,9 +37,10 @@ class MyGame extends Phaser.Scene {
 
   preload(): void {
     // Preload assets
-    this.load.image('playerStand', 'assets/player_stand.png');
-    this.load.image('playerWalk1', 'assets/player_walk1.png');
-    this.load.image('playerWalk2', 'assets/player_walk2.png');
+    this.load.image('playerStand', 'assets/player/player_stand.png');
+    this.load.image('playerWalk1', 'assets/player/player_walk1.png');
+    this.load.image('playerWalk2', 'assets/player/player_walk2.png');
+    this.load.image('bullet', 'assets/weapons/Rock.png');
   }
 
   create(): void {
@@ -57,9 +56,6 @@ class MyGame extends Phaser.Scene {
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
     this.player.levelUp = false; // Initialiser levelUp-flaget
-
-    // Opret LevelUpPopup
-    this.levelUpPopup = new LevelUpPopup(this); // Initialiser popup'en
 
     // Opret kamera og keybinds
     createCamera.call(this);
@@ -112,12 +108,6 @@ class MyGame extends Phaser.Scene {
         this.lastFired = time + this.fireRate;
         this.reloadBar.startReload();
       }
-    }
-
-    // Check for level up og vis popup
-    if (this.player.levelUp) {
-      this.player.levelUp = false; // Nulstil levelUp-flaget
-      this.levelUpPopup.create(this.player.level); // Vis popup
     }
   }
 }

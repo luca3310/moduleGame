@@ -1,6 +1,9 @@
 import Phaser from "phaser";
 
 export default class LevelBar {
+  setScrollFactor(arg0: number) {
+    throw new Error("Method not implemented.");
+  }
   private levelBarBackground!: Phaser.GameObjects.Graphics;
   private levelBar!: Phaser.GameObjects.Graphics;
   private levelTextInsideBar!: Phaser.GameObjects.Text;
