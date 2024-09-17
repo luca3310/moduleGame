@@ -39,10 +39,16 @@ class MyGame extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('playerStand', 'assets/player/player_stand.png');
-    this.load.image('playerWalk1', 'assets/player/player_walk1.png');
-    this.load.image('playerWalk2', 'assets/player/player_walk2.png');
-    this.load.image('bullet', 'assets/weapons/Rock.png');
+    // Preload assets med de korrekte filnavne
+    this.load.image('playerStand', 'assets/Player/player_stand.png');
+    this.load.image('playerWalk1', 'assets/Player/player_walk1.png');
+    this.load.image('playerWalk2', 'assets/Player/player_walk2.png');
+    this.load.image('bullet', 'assets/weapons/rock.png');
+  
+    // Ændret fra 'enemy' til 'zombie' for at matche filnavne
+    this.load.image('enemyStand', 'assets/Enemy/zombie_stand.png');
+    this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
+    this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');
   }
 
   create(): void {
@@ -85,7 +91,7 @@ class MyGame extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     updatePlayerMovement.call(this);
-    updateEnemyMovement.call(this, Phaser);
+    updateEnemyMovement.call(this);
 
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
