@@ -119,4 +119,3 @@ export default class MyGame extends Phaser.Scene {
     this.killCounter.updateKills(this.kills); // Opdater kill counter
   }
 }
-
