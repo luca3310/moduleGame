@@ -11,21 +11,24 @@ import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
+import LevelUpPopup from './ui/LevelUpPopup'; // Importér LevelUpPopup
 
 // Udvid Phaser's sprite med ekstra egenskaber for level og XP
 type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
   level: number;
   xp: number;
   xpToNextLevel: number;
+  levelUp: boolean; // Tilføjet levelUp-flag
 };
 
 class MyGame extends Phaser.Scene {
-  private player!: PlayerWithStats;  // Cast player til vores udvidede type
+  private player!: PlayerWithStats;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
   private enemies!: Phaser.GameObjects.Group;
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
+  private levelUpPopup!: LevelUpPopup; // Tilføj levelUpPopup
 
   private lastFired: number = 0;
   private fireRate: number = 1000;
@@ -53,6 +56,10 @@ class MyGame extends Phaser.Scene {
     this.player.level = 1;
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
+    this.player.levelUp = false; // Initialiser levelUp-flaget
+
+    // Opret LevelUpPopup
+    this.levelUpPopup = new LevelUpPopup(this); // Initialiser popup'en
 
     // Opret kamera og keybinds
     createCamera.call(this);
@@ -73,6 +80,7 @@ class MyGame extends Phaser.Scene {
 
     // Initialiser musen
     this.leftMouseButton = this.input.activePointer;
+
   }
 
   update(time: number, delta: number): void {
@@ -83,8 +91,16 @@ class MyGame extends Phaser.Scene {
     updateEnemyMovement.call(this, Phaser);
 
     // Opdater level bar og XP for spilleren
-    this.levelBar.updateLevel(this.player.level);  // level opdatering
-    this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);  // XP opdatering
+    this.levelBar.updateLevel(this.player.level);
+    this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
+
+    // Tjek for XP og opgradér level hvis nødvendigt
+    if (this.player.xp >= this.player.xpToNextLevel) {
+      this.player.level++;
+      this.player.xp -= this.player.xpToNextLevel; // Fjern den brugte XP
+      this.player.xpToNextLevel *= 1.5; // Forøg kravene for næste level
+      this.player.levelUp = true; // Sæt flaget til true, så popup'en vises
+    }
 
     // Opdater reload bar
     this.reloadBar.update();
@@ -96,6 +112,12 @@ class MyGame extends Phaser.Scene {
         this.lastFired = time + this.fireRate;
         this.reloadBar.startReload();
       }
+    }
+
+    // Check for level up og vis popup
+    if (this.player.levelUp) {
+      this.player.levelUp = false; // Nulstil levelUp-flaget
+      this.levelUpPopup.create(this.player.level); // Vis popup
     }
   }
 }
