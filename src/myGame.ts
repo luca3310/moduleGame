@@ -11,6 +11,7 @@ import spawnBullet from "./bullet/spawnBullet";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
+import KillCounter from "./ui/KillCounter"; // Importer KillCounter klassen
 
 // Udvid Phaser's sprite med ekstra egenskaber for level og XP
 type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
@@ -27,16 +28,17 @@ class MyGame extends Phaser.Scene {
   private enemies!: Phaser.GameObjects.Group;
   private levelBar!: LevelBar;
   private reloadBar!: ReloadBar;
+  private killCounter!: KillCounter; // Tilføj KillCounter instans
 
   private lastFired: number = 0;
   private fireRate: number = 1000;
+  private kills: number = 0;
 
   constructor() {
     super({ key: "MyGame" });
   }
 
   preload(): void {
-    // Preload assets
     this.load.image('playerStand', 'assets/player/player_stand.png');
     this.load.image('playerWalk1', 'assets/player/player_walk1.png');
     this.load.image('playerWalk2', 'assets/player/player_walk2.png');
@@ -46,62 +48,57 @@ class MyGame extends Phaser.Scene {
   create(): void {
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2;
-
-    // Opret spilleren og tilføj egenskaber for level, XP osv.
+  
     createPlayer.call(this, centerX, centerY);
-
-    // Cast `this.player` til `PlayerWithStats` og initialiser level og XP
     this.player = this.player as PlayerWithStats;
     this.player.level = 1;
     this.player.xp = 0;
     this.player.xpToNextLevel = 100;
-    this.player.levelUp = false; // Initialiser levelUp-flaget
-
-    // Opret kamera og keybinds
+    this.player.levelUp = false;
+  
     createCamera.call(this);
     keybinds.call(this, Phaser);
-
-    // Opret fjender og skudsystem
     createEnemy.call(this);
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
-
-    // Opret level bar og reload bar
+  
+    // Opret level bar
     this.levelBar = new LevelBar(this);
     this.levelBar.create();
-
+  
+    // Beregn positionen for KillCounter baseret på LevelBar's position og størrelse
+    const levelBarHeight = this.levelBar.getHeight(); // Forudsat at du har en metode til at få højden
+    const killCounterY = this.levelBar.getY() + levelBarHeight + 10; // 10 pixels margin
+  
+    // Opret reload bar
     this.reloadBar = new ReloadBar(this);
     this.reloadBar.create();
-
-    // Initialiser musen
+  
+    // Opret kill counter og placér den under level bar
+    this.killCounter = new KillCounter(this);
+    this.killCounter.setPosition(10, killCounterY); // Sæt positionen for KillCounter
+  
     this.leftMouseButton = this.input.activePointer;
-
+    this.events.on('enemyKilled', this.updateKillCounter, this);
   }
 
   update(time: number, delta: number): void {
-    // Opdater spillerens bevægelse
     updatePlayerMovement.call(this);
-
-    // Opdater fjendens bevægelse
     updateEnemyMovement.call(this, Phaser);
 
-    // Opdater level bar og XP for spilleren
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
 
-    // Tjek for XP og opgradér level hvis nødvendigt
     if (this.player.xp >= this.player.xpToNextLevel) {
       this.player.level++;
-      this.player.xp -= this.player.xpToNextLevel; // Fjern den brugte XP
-      this.player.xpToNextLevel *= 1.5; // Forøg kravene for næste level
-      this.player.levelUp = true; // Sæt flaget til true, så popup'en vises
+      this.player.xp -= this.player.xpToNextLevel;
+      this.player.xpToNextLevel *= 1.5;
+      this.player.levelUp = true;
     }
 
-    // Opdater reload bar
     this.reloadBar.update();
 
-    // Håndter skud når venstre musetast er nede
     if (!this.reloadBar.getReloadingStatus() && this.leftMouseButton.isDown) {
       if (time > this.lastFired) {
         spawnBullet.call(this, this.leftMouseButton);
@@ -110,9 +107,12 @@ class MyGame extends Phaser.Scene {
       }
     }
   }
-}
 
-// Phaser konfiguration
+  private updateKillCounter(): void {
+    this.kills += 1;
+    this.killCounter.updateKills(this.kills); // Opdater kill counter
+  }
+}
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: window.innerWidth,
@@ -125,7 +125,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: MyGame,
+  scene: [MyGame], // Tilføj begge scener her
 };
 
 // Initialiser spillet

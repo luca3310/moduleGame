@@ -47,6 +47,9 @@ export default function bulletCollision() {
         // Destroy the enemy only if its health is zero or below
         enemy.destroy();
 
+        // Notify the scene that an enemy has been killed
+        this.events.emit('enemyKilled');
+
         // Add XP to the player
         this.player.xp += 10;
 

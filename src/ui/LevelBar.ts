@@ -1,13 +1,13 @@
+// ui/LevelBar.ts
 import Phaser from "phaser";
 
 export default class LevelBar {
-  setScrollFactor(arg0: number) {
-    throw new Error("Method not implemented.");
-  }
   private levelBarBackground!: Phaser.GameObjects.Graphics;
   private levelBar!: Phaser.GameObjects.Graphics;
   private levelTextInsideBar!: Phaser.GameObjects.Text;
   private xpText!: Phaser.GameObjects.Text;
+  private barY: number = 10; // Tilføj Y-position som en egenskab
+  private barHeight: number = 20; // Tilføj højde som en egenskab
 
   constructor(private scene: Phaser.Scene) {}
 
@@ -15,22 +15,21 @@ export default class LevelBar {
     const { width } = this.scene.cameras.main;
     const barWidth = width - 20;
     const barX = 10;
-    const barY = 10; // Adjusted to position at the top
 
     // Background for the level bar
     this.levelBarBackground = this.scene.add.graphics();
     this.levelBarBackground.fillStyle(0x333333, 1);
-    this.levelBarBackground.fillRect(barX, barY, barWidth, 20);
+    this.levelBarBackground.fillRect(barX, this.barY, barWidth, this.barHeight);
     this.levelBarBackground.setScrollFactor(0);
 
     // Level bar with modern gradient
     this.levelBar = this.scene.add.graphics();
     this.levelBar.fillStyle(0x1e90ff, 1); // Modern blue color
-    this.levelBar.fillRect(barX, barY, barWidth, 20);
+    this.levelBar.fillRect(barX, this.barY, barWidth, this.barHeight);
     this.levelBar.setScrollFactor(0);
 
     // Level text with a sleek font
-    this.levelTextInsideBar = this.scene.add.text(barX + barWidth - 10, barY + 10, `Level: 1`, {
+    this.levelTextInsideBar = this.scene.add.text(barX + barWidth - 10, this.barY + this.barHeight / 2, `Level: 1`, {
       fontSize: "20px",
       fontFamily: "Roboto, sans-serif",
       color: "#ffffff",
@@ -42,7 +41,7 @@ export default class LevelBar {
     this.levelTextInsideBar.setScrollFactor(0);
 
     // XP text in the center with modern font
-    this.xpText = this.scene.add.text(barX + barWidth / 2, barY + 10, `XP: 0 / 100`, {
+    this.xpText = this.scene.add.text(barX + barWidth / 2, this.barY + this.barHeight / 2, `XP: 0 / 100`, {
       fontSize: "16px",
       fontFamily: "Roboto, sans-serif",
       color: "#ffffff",
@@ -52,6 +51,14 @@ export default class LevelBar {
     });
     this.xpText.setOrigin(0.5, 0.5); // Center the text
     this.xpText.setScrollFactor(0);
+  }
+
+  getY(): number {
+    return this.barY;
+  }
+
+  getHeight(): number {
+    return this.barHeight;
   }
 
   updateLevel(level: number) {
