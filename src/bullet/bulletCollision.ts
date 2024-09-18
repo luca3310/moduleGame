@@ -37,9 +37,24 @@ export default function bulletCollision() {
 
       if (enemy.health <= 0) {
         enemy.destroy();
-        this.events.emit('enemyKilled');
+        this.events.emit("enemyKilled");
 
-        this.player.xp += 40;
+        const numXpBlops = 3; // Number of xpBlops in the splash
+
+        for (let i = 0; i < numXpBlops; i++) {
+          const xpBlop = this.xpBlops.get(enemy.x, enemy.y, "blueRect");
+
+          xpBlop.body.velocity.x = Phaser.Math.Between(-100, 100);
+          xpBlop.body.velocity.y = Phaser.Math.Between(-100, 100);
+
+          this.time.addEvent({
+            delay: 500, // Time in ms before the callback is executed
+            callback: () => {
+              xpBlop.body.velocity.x = 0;
+              xpBlop.body.velocity.y = 0;
+            },
+          });
+        }
 
         if (this.player.xp >= this.player.xpToNextLevel) {
           this.player.level += 1;
