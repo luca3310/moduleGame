@@ -50,8 +50,10 @@ export default function bulletCollision() {
           this.time.addEvent({
             delay: 500, // Time in ms before the callback is executed
             callback: () => {
-              xpBlop.body.velocity.x = 0;
-              xpBlop.body.velocity.y = 0;
+              if (xpBlop?.body?.velocity) {
+                xpBlop.body.velocity.x = 0;
+                xpBlop.body.velocity.y = 0;
+              }
             },
           });
         }
