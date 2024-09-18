@@ -55,6 +55,7 @@ export default class MyGame extends Phaser.Scene {
     this.load.audio('heartbeatLow', 'assets/Sounds/heartbeatLow.mp3');
     this.load.audio('heartbeatMedium', 'assets/Sounds/heartbeatMedium.mp3');
     this.load.audio('heartbeatHigh', 'assets/Sounds/heartbeatHigh.mp3');
+    this.load.audio('zombieHit', 'assets/Sounds/Zombie/163447__under7dude__zombie-hit.wav');
   }
 
   create(): void {
