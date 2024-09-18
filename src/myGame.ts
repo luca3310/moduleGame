@@ -62,16 +62,16 @@ export default class MyGame extends Phaser.Scene {
   create(): void {
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2;
-  
+
     this.bullets = this.add.group({
       classType: Phaser.Physics.Arcade.Sprite,
       runChildUpdate: true,
     });
-  
+
     this.initializePlayer(centerX, centerY); // Opretter spiller og sundhedsbar
     this.initializeUI();
     this.initializeInput();
-  
+
     createCamera.call(this);
     keybinds.call(this, Phaser);
     createEnemy.call(this);
@@ -80,10 +80,12 @@ export default class MyGame extends Phaser.Scene {
     bulletCollision.call(this);
     createXp.call(this);
 
+    // Initialize and create LevelUpMenu
+    this.levelUpMenu = new LevelUpMenu(this);
+    this.levelUpMenu.create(); // Ensure it is created before accessing
+
     this.leftMouseButton = this.input.activePointer;
     this.dashCooldownBar = this.add.graphics();
-  
- 
 
     // Play background music
     const music = this.sound.add("ambience", {
@@ -91,8 +93,9 @@ export default class MyGame extends Phaser.Scene {
       volume: 0.5,
     });
     music.play();
-  }
-  update(time: number, delta: number): void {
+}
+
+update(time: number, delta: number): void {
     if (this.isPaused) return;
 
     updatePlayerMovement.call(this);
@@ -109,6 +112,8 @@ export default class MyGame extends Phaser.Scene {
 
     if (this.player.xp >= this.player.xpToNextLevel) {
       this.player.level++;
+      console.log("here ");
+      
       this.player.xp -= this.player.xpToNextLevel;
       this.player.xpToNextLevel *= 1.5;
       this.player.levelUp = true;
