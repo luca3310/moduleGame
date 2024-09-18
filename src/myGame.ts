@@ -16,6 +16,7 @@ import Timer from "./ui/Timer";
 import KillCounter from "./ui/KillCounter";
 import { PlayerWithStats } from "./player/PlayerStats";
 import HealthBar from "./ui/HealthBar";
+import LevelUpMenu from "./LevelUpMenu";
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
@@ -37,6 +38,8 @@ export default class MyGame extends Phaser.Scene {
   private fireRate: number = 1000;
   private timer!: Timer;
   private killCounter!: KillCounter;
+  private levelUpMenu!: LevelUpMenu; // Ensure this is declared
+
 
   constructor() {
     super({ key: "MyGame" });
@@ -52,30 +55,34 @@ export default class MyGame extends Phaser.Scene {
     this.load.image("enemyWalk2", "assets/Enemy/zombie_walk2.png");
 
     this.load.audio("ambience", "assets/Music/Zombies.mp3");
+    this.load.json('powerUps', 'assets/powerUps.json');
+    // You can load other assets like images here
   }
 
   create(): void {
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2;
-
+  
     this.bullets = this.add.group({
       classType: Phaser.Physics.Arcade.Sprite,
       runChildUpdate: true,
     });
-
+  
     this.initializePlayer(centerX, centerY); // Opretter spiller og sundhedsbar
     this.initializeUI();
     this.initializeInput();
-
+  
     createCamera.call(this);
     keybinds.call(this, Phaser);
     createEnemy.call(this);
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
-
+  
     this.leftMouseButton = this.input.activePointer;
     this.dashCooldownBar = this.add.graphics();
+  
+ 
 
     // Play background music
     const music = this.sound.add("ambience", {
@@ -84,13 +91,11 @@ export default class MyGame extends Phaser.Scene {
     });
     music.play();
   }
-
   update(time: number, delta: number): void {
     if (this.isPaused) return;
 
     updatePlayerMovement.call(this);
     updateEnemyMovement.call(this);
-
     this.updateUI();
     this.handleBulletFiring(time);
     this.updateDashCooldownBar(time);
@@ -99,6 +104,16 @@ export default class MyGame extends Phaser.Scene {
     // Sørg for, at sundhedsbaren følger spilleren
     if (this.healthBar) {
       this.healthBar.updatePosition();
+    }
+
+    if (this.player.xp >= this.player.xpToNextLevel) {
+      this.player.level++;
+      this.player.xp -= this.player.xpToNextLevel;
+      this.player.xpToNextLevel *= 1.5;
+      this.player.levelUp = true;
+  
+      // Vis level-up menu
+      this.levelUpMenu.show(this.player.level);
     }
   }
 
@@ -141,21 +156,15 @@ export default class MyGame extends Phaser.Scene {
       this.levelBar.updateLevel(this.player.level);
       this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
     }
-
+  
     if (this.reloadBar) {
       this.reloadBar.update();
     }
-
+  
     if (this.healthBar) {
-      this.healthBar.updateHealth(this.player.stats.health); // Opdaterer sundhed
+      this.healthBar.updateHealth(this.player.stats.health);
     }
-
-    if (this.player.xp >= this.player.xpToNextLevel) {
-      this.player.level++;
-      this.player.xp -= this.player.xpToNextLevel;
-      this.player.xpToNextLevel *= 1.5;
-      this.player.levelUp = true;
-    }
+  
   }
 
   private handleBulletFiring(time: number): void {

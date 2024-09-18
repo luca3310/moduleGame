@@ -39,7 +39,7 @@ export default function bulletCollision() {
         enemy.destroy();
         this.events.emit('enemyKilled');
 
-        this.player.xp += 10;
+        this.player.xp += 40;
 
         if (this.player.xp >= this.player.xpToNextLevel) {
           this.player.level += 1;

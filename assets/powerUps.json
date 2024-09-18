@@ -1,0 +1,6 @@
+[
+    { "imageKey": "powerUp1", "title": "Power Up 1", "description": "Increase damage by 10%" },
+    { "imageKey": "powerUp2", "title": "Power Up 2", "description": "Boost speed by 20%" },
+    { "imageKey": "powerUp3", "title": "Power Up 3", "description": "Enhance health by 32%" },
+    { "imageKey": "powerUp4", "title": "Power Up 4", "description": "Reduce cooldown by 15%" }
+]
