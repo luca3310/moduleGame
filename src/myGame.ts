@@ -1,20 +1,21 @@
-import Phaser from 'phaser';
-import createPlayer from './player/createPlayer';
-import updatePlayerMovement from './player/updatePlayerMovement';
-import keybinds from './keybinds';
-import createCamera from './camera/createCamera';
-import createEnemySpawner from './enemySpawner/createEnemySpawner';
-import updateEnemyMovement from './enemy/updateEnemyMovement';
-import createEnemy from './enemy/createEnemy';
-import createBullet from './bullet/createBullet';
-import spawnBullet from './bullet/spawnBullet';
-import bulletCollision from './bullet/bulletCollision';
-import LevelBar from './ui/LevelBar';
-import ReloadBar from './ui/ReloadBar';
-import Timer from './ui/Timer';
-import KillCounter from './ui/KillCounter';
-import { PlayerWithStats } from './player/PlayerStats';
-import HealthBar from './ui/HealthBar';
+import Phaser from "phaser";
+import createPlayer from "./player/createPlayer";
+import updatePlayerMovement from "./player/updatePlayerMovement";
+import keybinds from "./keybinds";
+import createCamera from "./camera/createCamera";
+import createEnemySpawner from "./enemySpawner/createEnemySpawner";
+import updateEnemyMovement from "./enemy/updateEnemyMovement";
+import createEnemy from "./enemy/createEnemy";
+import createBullet from "./bullet/createBullet";
+import spawnBullet from "./bullet/spawnBullet";
+import bulletMovement from "./bullet/BulletMovement";
+import bulletCollision from "./bullet/bulletCollision";
+import LevelBar from "./ui/LevelBar";
+import ReloadBar from "./ui/ReloadBar";
+import Timer from "./ui/Timer";
+import KillCounter from "./ui/KillCounter";
+import { PlayerWithStats } from "./player/PlayerStats";
+import HealthBar from "./ui/HealthBar";
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
@@ -38,19 +39,19 @@ export default class MyGame extends Phaser.Scene {
   private killCounter!: KillCounter;
 
   constructor() {
-    super({ key: 'MyGame' });
+    super({ key: "MyGame" });
   }
 
   preload(): void {
-    this.load.image('playerStand', 'assets/Player/player_stand.png');
-    this.load.image('playerWalk1', 'assets/Player/player_walk1.png');
-    this.load.image('playerWalk2', 'assets/Player/player_walk2.png');
-    this.load.image('bullet', 'assets/weapons/rock.png');
-    this.load.image('enemyStand', 'assets/Enemy/zombie_stand.png');
-    this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
-    this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');
+    this.load.image("playerStand", "assets/Player/player_stand.png");
+    this.load.image("playerWalk1", "assets/Player/player_walk1.png");
+    this.load.image("playerWalk2", "assets/Player/player_walk2.png");
+    this.load.image("bullet", "assets/weapons/rock.png");
+    this.load.image("enemyStand", "assets/Enemy/zombie_stand.png");
+    this.load.image("enemyWalk1", "assets/Enemy/zombie_walk1.png");
+    this.load.image("enemyWalk2", "assets/Enemy/zombie_walk2.png");
 
-    this.load.audio('ambience', 'assets/Music/Zombies.mp3');
+    this.load.audio("ambience", "assets/Music/Zombies.mp3");
   }
 
   create(): void {
@@ -77,7 +78,7 @@ export default class MyGame extends Phaser.Scene {
     this.dashCooldownBar = this.add.graphics();
 
     // Play background music
-    const music = this.sound.add('ambience', {
+    const music = this.sound.add("ambience", {
       loop: true,
       volume: 0.5,
     });
@@ -126,8 +127,8 @@ export default class MyGame extends Phaser.Scene {
   }
 
   private initializeInput(): void {
-    this.input.keyboard.on('keydown-ESC', () => this.togglePause());
-    this.input.keyboard.on('keydown-P', () => this.togglePause());
+    this.input.keyboard.on("keydown-ESC", () => this.togglePause());
+    this.input.keyboard.on("keydown-P", () => this.togglePause());
   }
 
   private updateUI(): void {
@@ -164,19 +165,22 @@ export default class MyGame extends Phaser.Scene {
 
   public togglePause(): void {
     if (this.isPaused) {
-      console.log('Resuming game and stopping pause menu');
-      this.scene.resume('MyGame');
-      this.scene.stop('PauseMenu');
+      console.log("Resuming game and stopping pause menu");
+      this.scene.resume("MyGame");
+      this.scene.stop("PauseMenu");
     } else {
-      console.log('Pausing game and launching pause menu');
-      this.scene.pause('MyGame');
-      this.scene.launch('PauseMenu');
+      console.log("Pausing game and launching pause menu");
+      this.scene.pause("MyGame");
+      this.scene.launch("PauseMenu");
     }
     this.isPaused = !this.isPaused;
   }
 
   public resetGame(): void {
-    this.initializePlayer(this.cameras.main.width / 2, this.cameras.main.height / 2);
+    this.initializePlayer(
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2,
+    );
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
 
@@ -197,7 +201,7 @@ export default class MyGame extends Phaser.Scene {
   updatePlayerStats(statName: string, value: number): void {
     if (this.player.stats.hasOwnProperty(statName)) {
       this.player.stats[statName] = value;
-      this.events.emit('statsChanged', this.player.stats);
+      this.events.emit("statsChanged", this.player.stats);
     }
   }
 
@@ -221,7 +225,12 @@ export default class MyGame extends Phaser.Scene {
       const barY = this.player.y + 40;
 
       this.dashCooldownBar.fillStyle(0xffffff, 1);
-      this.dashCooldownBar.fillRect(barX, barY, barWidth, this.dashCooldownHeight);
+      this.dashCooldownBar.fillRect(
+        barX,
+        barY,
+        barWidth,
+        this.dashCooldownHeight,
+      );
     }
   }
 }

@@ -4,16 +4,16 @@ import HealthBar from "../ui/HealthBar"; // Sørg for den rigtige sti til Health
 export default function createPlayer(x: number, y: number) {
   // Opret en spiller sprite med fysik
   this.player = this.physics.add.sprite(x, y, "playerStand");
-
+  this.player.setOrigin(0.5, 0.5);
   // Tilføj properties for niveau og XP
   this.player.level = 1;
   this.player.xp = 0;
   this.player.xpToNextLevel = 100; // XP required for the next level
   this.player.health = 100; // Initial health
-  this.player.setDepth(0)
+  this.player.setDepth(0);
 
   // Tjek, om 'walk' animationen allerede eksisterer
-  if (!this.anims.exists('walk')) {
+  if (!this.anims.exists("walk")) {
     // Opret animationer for spillerens bevægelse (walk)
     this.anims.create({
       key: "walk",
@@ -30,7 +30,10 @@ export default function createPlayer(x: number, y: number) {
   this.physics.add.collider(
     this.player,
     this.enemies,
-    (player: Phaser.Physics.Arcade.Sprite, enemy: Phaser.Physics.Arcade.Sprite) => {
+    (
+      player: Phaser.Physics.Arcade.Sprite,
+      enemy: Phaser.Physics.Arcade.Sprite,
+    ) => {
       console.log("Collision between player and enemy!");
 
       // Reducer spillerens sundhed ved kollision
@@ -47,3 +50,4 @@ export default function createPlayer(x: number, y: number) {
     },
   );
 }
+
