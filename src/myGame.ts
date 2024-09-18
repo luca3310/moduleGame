@@ -49,12 +49,14 @@ export default class MyGame extends Phaser.Scene {
     this.load.image('enemyStand', 'assets/Enemy/zombie_stand.png');
     this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
     this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');
+
+    this.load.audio('ambience', 'assets/Music/Zombies.mp3');
   }
 
   create(): void {
     const centerX = this.cameras.main.width / 2;
     const centerY = this.cameras.main.height / 2;
-    
+
     this.bullets = this.add.group({
       classType: Phaser.Physics.Arcade.Sprite,
       runChildUpdate: true,
@@ -73,6 +75,13 @@ export default class MyGame extends Phaser.Scene {
 
     this.leftMouseButton = this.input.activePointer;
     this.dashCooldownBar = this.add.graphics();
+
+    // Play background music
+    const music = this.sound.add('ambience', {
+      loop: true,
+      volume: 0.5,
+    });
+    music.play();
   }
 
   update(time: number, delta: number): void {
