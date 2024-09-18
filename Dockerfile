@@ -1,22 +1,33 @@
-FROM node:16
+# Stage 1: Build the app with Node.js and Vite
+FROM node:18-alpine as build
 
-# Create and change to the app directory.
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy only package.json and package-lock.json to leverage Docker caching for dependencies
 COPY package*.json ./
 
-# Install production dependencies.
-RUN npm install --only=production
+# Install dependencies
+RUN npm ci
 
-# Copy the rest of the application code
+# Copy the rest of the application files
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the app using Vite
+RUN npm run make
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Stage 2: Use a lightweight web server to serve the app
+FROM nginx:alpine
 
-# Define the command to run the app
-CMD ["npm", "start"]
+# Copy built files from the previous stage
+COPY --from=build /app/.vite/build /usr/share/nginx/html
+
+# Copy a basic nginx configuration (if needed)
+# You can adjust the NGINX config file to meet Traefik requirements if necessary
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80 for NGINX to serve the app
+EXPOSE 80
+
+# Start NGINX server
+CMD ["nginx", "-g", "daemon off;"]
