@@ -49,7 +49,6 @@ export default class MyGame extends Phaser.Scene {
     this.load.image('enemyStand', 'assets/Enemy/zombie_stand.png');
     this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
     this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');
-
     this.load.audio('ambience', 'assets/Music/Zombies.mp3');
   }
 
@@ -62,7 +61,7 @@ export default class MyGame extends Phaser.Scene {
       runChildUpdate: true,
     });
 
-    this.initializePlayer(centerX, centerY);
+    this.initializePlayer(centerX, centerY); // Opretter spiller og sundhedsbar
     this.initializeUI();
     this.initializeInput();
 
@@ -94,6 +93,11 @@ export default class MyGame extends Phaser.Scene {
     this.handleBulletFiring(time);
     this.updateDashCooldownBar(time);
     this.timer.update(delta);
+
+    // Sørg for, at sundhedsbaren følger spilleren
+    if (this.healthBar) {
+      this.healthBar.updatePosition();
+    }
   }
 
   private initializePlayer(centerX: number, centerY: number): void {
@@ -119,7 +123,7 @@ export default class MyGame extends Phaser.Scene {
     this.reloadBar.create();
 
     this.healthBar = new HealthBar(this, this.player);
-    this.healthBar.create();
+    this.healthBar.create(); // Opret sundhedsbaren og knyt den til spilleren
 
     this.timer = new Timer(this);
     this.killCounter = new KillCounter(this);
@@ -141,7 +145,7 @@ export default class MyGame extends Phaser.Scene {
     }
 
     if (this.healthBar) {
-      this.healthBar.updateHealth(this.player.stats.health);
+      this.healthBar.updateHealth(this.player.stats.health); // Opdaterer sundhed
     }
 
     if (this.player.xp >= this.player.xpToNextLevel) {
@@ -164,11 +168,9 @@ export default class MyGame extends Phaser.Scene {
 
   public togglePause(): void {
     if (this.isPaused) {
-      console.log('Resuming game and stopping pause menu');
       this.scene.resume('MyGame');
       this.scene.stop('PauseMenu');
     } else {
-      console.log('Pausing game and launching pause menu');
       this.scene.pause('MyGame');
       this.scene.launch('PauseMenu');
     }
@@ -192,13 +194,6 @@ export default class MyGame extends Phaser.Scene {
     this.healthBar.updateHealth(this.player.stats.health);
     this.timer = new Timer(this); // Reset timer
     this.killCounter = new KillCounter(this); // Reset kill counter
-  }
-
-  updatePlayerStats(statName: string, value: number): void {
-    if (this.player.stats.hasOwnProperty(statName)) {
-      this.player.stats[statName] = value;
-      this.events.emit('statsChanged', this.player.stats);
-    }
   }
 
   public incrementKillCount(): void {
