@@ -1,4 +1,3 @@
-// createPlayer.ts
 import HealthBar from "../ui/HealthBar"; // Sørg for den rigtige sti til HealthBar
 
 export default function createPlayer(x: number, y: number) {
@@ -23,9 +22,10 @@ export default function createPlayer(x: number, y: number) {
     });
   }
 
-  // Tilføj sundhedsbar til spilleren
-  this.healthBar = new HealthBar(this, this.player);
-  this.healthBar.create();
+  // Opretter en sundhedsbar i MyGame
+  // Sundhedsbaren er allerede oprettet i initializeUI, så fjern dette fra createPlayer
+  // this.healthBar = new HealthBar(this, this.player);
+  // this.healthBar.create();
 
   this.physics.add.collider(
     this.player,
@@ -38,7 +38,10 @@ export default function createPlayer(x: number, y: number) {
 
       // Reducer spillerens sundhed ved kollision
       this.player.health -= 10;
-      this.healthBar.updateHealth(this.player.health); // Opdater sundhedsbar
+      // Opdater sundhedsbar ved at kalde den relevante metode i 'MyGame'
+      if (this.healthBar) {
+        this.healthBar.updateHealth(this.player.health);
+      }
 
       // Check for health below zero
       if (this.player.health <= 0) {
@@ -50,4 +53,3 @@ export default function createPlayer(x: number, y: number) {
     },
   );
 }
-

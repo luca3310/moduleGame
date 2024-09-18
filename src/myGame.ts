@@ -63,7 +63,7 @@ export default class MyGame extends Phaser.Scene {
       runChildUpdate: true,
     });
 
-    this.initializePlayer(centerX, centerY);
+    this.initializePlayer(centerX, centerY); // Opretter spiller og sundhedsbar
     this.initializeUI();
     this.initializeInput();
 
@@ -95,6 +95,11 @@ export default class MyGame extends Phaser.Scene {
     this.handleBulletFiring(time);
     this.updateDashCooldownBar(time);
     this.timer.update(delta);
+
+    // Sørg for, at sundhedsbaren følger spilleren
+    if (this.healthBar) {
+      this.healthBar.updatePosition();
+    }
   }
 
   private initializePlayer(centerX: number, centerY: number): void {
@@ -120,7 +125,7 @@ export default class MyGame extends Phaser.Scene {
     this.reloadBar.create();
 
     this.healthBar = new HealthBar(this, this.player);
-    this.healthBar.create();
+    this.healthBar.create(); // Opret sundhedsbaren og knyt den til spilleren
 
     this.timer = new Timer(this);
     this.killCounter = new KillCounter(this);
@@ -142,7 +147,7 @@ export default class MyGame extends Phaser.Scene {
     }
 
     if (this.healthBar) {
-      this.healthBar.updateHealth(this.player.stats.health);
+      this.healthBar.updateHealth(this.player.stats.health); // Opdaterer sundhed
     }
 
     if (this.player.xp >= this.player.xpToNextLevel) {

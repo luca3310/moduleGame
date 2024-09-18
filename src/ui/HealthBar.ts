@@ -1,44 +1,40 @@
-// HealthBar.ts
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 export default class HealthBar {
-  private healthBarBackground!: Phaser.GameObjects.Graphics;
   private healthBar!: Phaser.GameObjects.Graphics;
-  private player!: Phaser.Physics.Arcade.Sprite;
+  private player: Phaser.Physics.Arcade.Sprite;
+  private scene: Phaser.Scene;
+  private maxHealth: number;
 
-  constructor(private scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite) {
+  constructor(scene: Phaser.Scene, player: Phaser.Physics.Arcade.Sprite) {
+    this.scene = scene;
     this.player = player;
+    this.maxHealth = 100; // Sæt spillerens max health (kan tilpasses)
   }
 
   create() {
-    // Opret baggrund for sundhedsbar
-    this.healthBarBackground = this.scene.add.graphics();
-    this.healthBarBackground.fillStyle(0x000000, 1);
-    this.healthBarBackground.fillRect(this.player.x - 25, this.player.y + 10, 50, 5); // Ændret til under spilleren
-    this.healthBarBackground.setScrollFactor(0);
-    this.healthBarBackground.setDepth(1);
-
-    // Opret selve sundhedsbar
+    // Opret en simpel sundhedsbar, der er grøn
     this.healthBar = this.scene.add.graphics();
-    this.healthBar.fillStyle(0xff0000, 1);
-    this.healthBar.fillRect(this.player.x - 25, this.player.y + 10, 50, 5); // Ændret til under spilleren
-    this.healthBar.setScrollFactor(0);
-    this.healthBar.setDepth(2);
+    this.healthBar.fillStyle(0x00ff00, 1); // Grøn farve
+    this.updatePosition(); // Opretter sundhedsbaren over spilleren ved starten
+    this.healthBar.setDepth(5); // Sørg for, at sundhedsbaren vises over spilleren
   }
 
   updateHealth(health: number) {
-    const healthPercentage = health / 100; // Assuming max health is 100
-    const barWidth = 50 * healthPercentage;
+    const healthPercentage = health / this.maxHealth; // Procentvis af max health
+    const barWidth = 50 * healthPercentage; // Beregn sundhedsbarens bredde ud fra procenten
 
-    // Opdater sundhedsbar
+    // Ryd sundhedsbaren og tegn den igen med den nye bredde
     this.healthBar.clear();
-    this.healthBar.fillStyle(0xff0000, 1);
-    this.healthBar.fillRect(this.player.x - 25, this.player.y + 10, barWidth, 5); // Ændret til under spilleren
+    this.healthBar.fillStyle(0x00ff00, 1); // Grøn farve
+    this.updatePosition(); // Opdaterer positionen af sundhedsbaren
+    this.healthBar.fillRect(0, 0, barWidth, 8); // Placer sundhedsbaren over spilleren
   }
 
-  update() {
-    // Opdater positionen af sundhedsbar til at følge spilleren
-    this.healthBarBackground.setPosition(this.player.x - 25, this.player.y + 10); // Ændret til under spilleren
-    this.healthBar.setPosition(this.player.x - 25, this.player.y + 10); // Ændret til under spilleren
+  updatePosition() {
+    // Sørg for, at sundhedsbaren følger spilleren
+    const barX = this.player.x - 25;
+    const barY = this.player.y - 48; // Løftet lidt højere op
+    this.healthBar.setPosition(barX, barY);
   }
 }
