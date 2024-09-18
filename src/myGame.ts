@@ -8,7 +8,7 @@ import updateEnemyMovement from "./enemy/updateEnemyMovement";
 import createEnemy from "./enemy/createEnemy";
 import createBullet from "./bullet/createBullet";
 import spawnBullet from "./bullet/spawnBullet";
-import bulletMovement from "./bullet/BulletMovement";
+import createXp from "./xp/createXp";
 import bulletCollision from "./bullet/bulletCollision";
 import LevelBar from "./ui/LevelBar";
 import ReloadBar from "./ui/ReloadBar";
@@ -73,6 +73,7 @@ export default class MyGame extends Phaser.Scene {
     createEnemySpawner.call(this);
     createBullet.call(this);
     bulletCollision.call(this);
+    createXp.call(this);
 
     this.leftMouseButton = this.input.activePointer;
     this.dashCooldownBar = this.add.graphics();

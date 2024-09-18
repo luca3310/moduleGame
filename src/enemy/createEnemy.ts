@@ -9,7 +9,7 @@ export default function createEnemy() {
   this.physics.add.collider(this.enemies, this.enemies);
 
   // Tjek, om 'enemyWalk' animationen allerede eksisterer
-  if (!this.anims.exists('enemyWalk')) {
+  if (!this.anims.exists("enemyWalk")) {
     // Opret animationer for fjendens bevægelse
     this.anims.create({
       key: "enemyWalk",
@@ -20,7 +20,7 @@ export default function createEnemy() {
   }
 
   // Opret en stillestand animation (valgfrit)
-  if (!this.anims.exists('enemyStand')) {
+  if (!this.anims.exists("enemyStand")) {
     this.anims.create({
       key: "enemyStand",
       frames: [{ key: "enemyStand" }],
@@ -28,11 +28,13 @@ export default function createEnemy() {
     });
   }
 
-  this.physics.add.collider(
+  this.physics.add.overlap(
     this.player,
     this.enemies,
     (player: any, enemy: any) => {
       // Collision logic here
+      console.log("hit");
     },
   );
 }
+
