@@ -62,11 +62,6 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.traefik-rtr.entrypoints=https'
       - 'traefik.http.routers.traefik-rtr.rule=Host(`traefik.${DOMAIN}`)'
-      - 'traefik.http.routers.traefik-zerotier-rtr.rule=Host(`traefik.zerotier`)'
-      - 'traefik.http.routers.traefik-rtr.service=api@internal'
-      - 'traefik.http.routers.traefik-zerotier-rtr.service=api@internal'
-      - 'traefik.http.routers.traefik-rtr.middlewares=chain-authentik@file'
-      - 'traefik.http.routers.traefik-zerotier-rtr.middlewares=${NO_AUTH}'
 
   ############################## Example Application Service
   modulegame:
