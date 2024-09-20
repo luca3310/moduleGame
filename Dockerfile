@@ -14,17 +14,16 @@ RUN npm ci
 COPY . .
 
 # Build the app using Vite
-RUN npm run make
+RUN npm run build
 
 # Stage 2: Use a lightweight web server to serve the app
 FROM nginx:alpine
 
 # Copy built files from the previous stage
-COPY --from=build /app/.vite/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy a basic nginx configuration (if needed)
-# You can adjust the NGINX config file to meet Traefik requirements if necessary
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy assets from the project directory to the nginx html directory
+COPY --from=build /app/assets /usr/share/nginx/html/assets
 
 # Expose port 80 for NGINX to serve the app
 EXPOSE 80
