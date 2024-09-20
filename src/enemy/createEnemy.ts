@@ -28,13 +28,19 @@ export default function createEnemy() {
     });
   }
 
-  this.physics.add.overlap(
+  this.physics.add.collider(
     this.player,
     this.enemies,
-    (player: any, enemy: any) => {
-      // Collision logic here
-      console.log("hit");
-    },
+    (player: Phaser.Physics.Arcade.Sprite, enemy: Phaser.Physics.Arcade.Sprite) => {
+      console.log("Collision between player and enemy!");
+  
+      // Reducer spillerens sundhed ved kollision
+      const damage = 10;
+      this.handlePlayerHit(damage);
+  
+      // Fjern fjenden ved kollision
+      enemy.destroy();
+    }
   );
 }
 

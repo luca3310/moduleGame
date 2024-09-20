@@ -45,6 +45,15 @@ export default class MyGame extends Phaser.Scene {
     super({ key: "MyGame" });
   }
 
+  handlePlayerHit(damage: number): void {
+    this.player.stats.health = Math.max(this.player.stats.health - damage, 0); // Sørg for, at health ikke går under 0
+    this.healthBar.updateHealth(this.player.stats.health); // Opdater sundhedsbaren
+    if (this.player.stats.health <= 0) {
+      console.log("Spilleren er død");
+      // Eventuel logik for når spilleren dør
+    }
+  }
+
   preload(): void {
     this.load.image("playerStand", "assets/Player/player_stand.png");
     this.load.image("playerWalk1", "assets/Player/player_walk1.png");
@@ -107,7 +116,7 @@ update(time: number, delta: number): void {
 
     // Sørg for, at sundhedsbaren følger spilleren
     if (this.healthBar) {
-      this.healthBar.updatePosition();
+      this.healthBar.updatePosition(this.player.x, this.player.y); // Opdater sundhedsbarens position til at følge spilleren
     }
 
     if (this.player.xp >= this.player.xpToNextLevel) {
@@ -148,7 +157,7 @@ update(time: number, delta: number): void {
     this.reloadBar.create();
 
     this.healthBar = new HealthBar(this, this.player);
-    this.healthBar.create(); // Opret sundhedsbaren og knyt den til spilleren
+    this.healthBar.create(this.player.x, this.player.y); // Opret sundhedsbaren med spillerens startposition
 
     this.timer = new Timer(this);
     this.killCounter = new KillCounter(this);
