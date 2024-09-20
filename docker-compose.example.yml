@@ -1,0 +1,82 @@
+# docker-compose.example.yml
+
+# Define the networks used by the services
+networks:
+  traefik:
+    name: traefik
+
+volumes:
+  traefik-rules: # Volume for storing Traefik rules
+  traefik-acme: # Volume for storing Let's Encrypt certificates
+  traefik-logs: # Volume for storing Traefik logs
+
+services:
+  ############################## Traefik Reverse Proxy Service
+  traefik:
+    container_name: traefik
+    image: traefik:2.7
+    restart: unless-stopped
+    command:
+      - --global.checkNewVersion=true
+      - --global.sendAnonymousUsage=true
+      - --entryPoints.http.address=:80
+      - --entryPoints.https.address=:443
+      - --entryPoints.grpc.address=:50051
+      - --entryPoints.traefik.address=:8080
+      - --api=true
+      - --api.insecure=true
+      - --log=true
+      - --log.level=INFO
+      - --accessLog=true
+      - --accessLog.filePath=/traefik.log
+      - --accessLog.bufferingSize=100
+      - --providers.docker=true
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.${DOMAIN}`)
+      - --providers.docker.exposedByDefault=false
+      - --entrypoints.https.http.tls.certresolver=dns-namecheap
+      - --entrypoints.https.http.tls.domains[0].main=${DOMAIN}
+      - --entrypoints.https.http.tls.domains[0].sans=*.${DOMAIN}
+      - --providers.docker.network=traefik
+      - --providers.docker.swarmMode=false
+      - --providers.file.directory=/rules
+      - --providers.file.watch=true
+      - --certificatesResolvers.dns-namecheap.acme.storage=/acme.json
+      - --certificatesResolvers.dns-namecheap.acme.dnsChallenge.provider=namecheap
+    networks:
+      - traefik
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-rules:/rules # Named volume for Traefik rules
+      - traefik-acme:/acme.json # Named volume for Let's Encrypt certificates (acme.json)
+      - traefik-logs:/traefik.log # Named volume for Traefik logs
+    environment:
+      - NAMECHEAP_API_USER=${NAMECHEAP_API_USER}
+      - NAMECHEAP_API_KEY=${NAMECHEAP_API_KEY}
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.traefik-rtr.entrypoints=https'
+      - 'traefik.http.routers.traefik-rtr.rule=Host(`traefik.${DOMAIN}`)'
+
+  ############################## Example Application Service
+  modulegame:
+    build:
+      context: ./appdata/moduleGame
+      dockerfile: Dockerfile
+    container_name: modulegame
+    image: modulegame
+    networks:
+      - traefik
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.modulegame-rtr.entrypoints=https'
+      - 'traefik.http.routers.modulegame-rtr.rule=Host(`modulegame.${DOMAIN}`)'
+      - 'traefik.http.routers.modulegame-rtr.service=modulegame-svc'
+      - 'traefik.http.services.modulegame-svc.loadbalancer.server.port=80'
+    environment:
+      - NODE_ENV=production
