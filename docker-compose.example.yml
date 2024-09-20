@@ -76,6 +76,7 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.modulegame-rtr.entrypoints=https'
       - 'traefik.http.routers.modulegame-rtr.rule=Host(`modulegame.${DOMAIN}`)'
+      - 'traefik.http.routers.modulegame-rtr.middlewares=chain-no-auth@file'
       - 'traefik.http.routers.modulegame-rtr.service=modulegame-svc'
       - 'traefik.http.services.modulegame-svc.loadbalancer.server.port=80'
     environment:
