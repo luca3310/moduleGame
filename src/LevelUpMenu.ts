@@ -1,3 +1,7 @@
+import Phaser from 'phaser';
+import Button from './Button'; // Sørg for at stien til Button.ts er korrekt
+import MyGame from './myGame';
+
 export default class LevelUpMenu {
     private scene: Phaser.Scene;
     private menu!: Phaser.GameObjects.Container;
@@ -9,24 +13,52 @@ export default class LevelUpMenu {
     }
 
     preload(): void {
-        // Load power-ups JSON here
-        this.scene.load.json('powerUps', 'assets/powerUps.json');
+        this.scene.load.json('powerUps', 'assets/powerUps.json'); // Loader power-ups data
     }
 
     create(): void {
-        // Create the menu container
+        // Opretter menu-containeren
         this.menu = this.scene.add.container(this.scene.cameras.main.width / 2, this.scene.cameras.main.height / 2);
-        this.menu.setScrollFactor(0); // Keep the menu fixed on the screen
+        this.menu.setScrollFactor(1); // Holder menuen fast på skærmen
     
-        // Add a semi-transparent background
-        const background = this.scene.add.graphics();
-        background.fillStyle(0x000000, 0.8); // Semi-transparent black
-        background.fillRect(-250, -200, 500, 400);
+        // Tilføjer en semi-transparent baggrund med gradient
+        const canvasWidth = 800;
+        const canvasHeight = 500;
+    
+        // Opretter ny canvas og kontekst
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        const ctx = canvas.getContext('2d')!;
+        
+        // Opretter gradient
+        const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
+        gradient.addColorStop(0, '#a3d9a5'); // Startfarve
+        gradient.addColorStop(1, '#4caf50'); // Slutfarve
+    
+        // Fylder canvas med gradient
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    
+        // Kontrollerer om teksturen allerede eksisterer og fjerner den, hvis den gør
+        if (this.scene.textures.exists('gradientBackground')) {
+            this.scene.textures.remove('gradientBackground');
+        }
+    
+        // Opretter Phaser tekstur fra canvas
+        const texture = this.scene.textures.createCanvas('gradientBackground', canvasWidth, canvasHeight);
+        texture.context.drawImage(canvas, 0, 0);
+        texture.refresh();
+    
+        // Tilføjer baggrunden til menuen
+        const background = this.scene.add.image(0, 0, 'gradientBackground');
+        background.setOrigin(0.5, 0.5);
+        background.setDisplaySize(canvasWidth, canvasHeight);
         this.menu.add(background);
     
-        // Add level-up text
-        this.levelText = this.scene.add.text(0, -150, "", {
-            fontSize: '32px',
+        // Tilføjer "Level Up!"-tekst
+        this.levelText = this.scene.add.text(0, -200, "", {
+            fontSize: '36px', // Større tekst for moderne stil
             color: '#ffffff',
             fontFamily: 'Arial',
             align: 'center',
@@ -34,94 +66,90 @@ export default class LevelUpMenu {
         }).setOrigin(0.5);
         this.menu.add(this.levelText);
     
-        // Create power-up options
-        this.createPowerUpOptions();
-    
-        // Hide menu by default
-        this.menu.setVisible(false);
-    }
-    
-    private createPowerUpOptions(): void {
-        const optionWidth = 200;
+        // Opretter power-up valgmuligheder
+        const optionWidth = 300;
         const optionHeight = 100;
-        const spacing = 20;
-
-        // Load power-up data from JSON
-        const powerUpData = this.scene.cache.json.get('powerUps');
-
+        const spacing = 50;
+    
+        const powerUpData = this.scene.cache.json.get('powerUps'); // Henter JSON-data
+    
         if (!powerUpData || !Array.isArray(powerUpData)) {
-            console.error('Failed to load power-up data or data is not an array.');
+            console.error('Kunne ikke indlæse power-up data, eller data er ikke et array.');
             return;
         }
-
-        // Shuffle the power-up data to randomize the order
-        Phaser.Utils.Array.Shuffle(powerUpData);
-
-        // Limit the number of power-ups shown
-        const numOptions = Math.min(4, powerUpData.length);
-
+    
+        Phaser.Utils.Array.Shuffle(powerUpData); // Shuffler data for tilfældige valg
+    
+        const numOptions = Math.min(3, powerUpData.length); // Begrænser til 3 valg
+    
         for (let i = 0; i < numOptions; i++) {
             const data = powerUpData[i];
             const option = this.scene.add.container();
-
-            // Background
-            const background = this.scene.add.graphics();
-            background.fillStyle(0x333333, 0.9); // Dark gray background
-            background.fillRect(0, 0, optionWidth, optionHeight);
-            option.add(background);
-
-            // Image
-            const image = this.scene.add.image(30, optionHeight / 2, data.imageKey);
-            image.setDisplaySize(80, 80); // Adjust size as needed
+            
+            // Baggrund for valgmuligheden
+            const optionGraphics = this.scene.add.graphics();
+            optionGraphics.fillStyle(0x333333, 0.9);
+            optionGraphics.fillRoundedRect(0, 0, optionWidth, optionHeight, 10);
+            option.add(optionGraphics);
+            
+            // Billede af power-up
+            const image = this.scene.add.image(50, optionHeight / 2, data.imageKey);
+            image.setDisplaySize(100, 100);
             option.add(image);
-
-            // Text
-            const title = this.scene.add.text(120, optionHeight / 2 - 30, data.title, {
-                fontSize: '20px',
+            
+            // Titel på power-up
+            const title = this.scene.add.text(150, optionHeight / 2 - 40, data.title, {
+                fontSize: '22px',
                 color: '#ffffff',
                 fontFamily: 'Arial',
                 align: 'left'
             }).setOrigin(0, 0.5);
             option.add(title);
-
-            const description = this.scene.add.text(120, optionHeight / 2 + 10, data.description, {
-                fontSize: '14px',
+            
+            // Beskrivelse af power-up
+            const description = this.scene.add.text(150, optionHeight / 2 + 10, data.description, {
+                fontSize: '16px',
                 color: '#cccccc',
                 fontFamily: 'Arial',
                 align: 'left',
-                wordWrap: { width: optionWidth - 150 }
+                wordWrap: { width: optionWidth - 160 }
             }).setOrigin(0, 0.5);
             option.add(description);
-
-            // Button Background
-            const buttonBackground = this.scene.add.graphics();
-            buttonBackground.fillStyle(0x007bff, 1); // Button color
-            buttonBackground.fillRoundedRect(optionWidth - 100, optionHeight / 2 - 15, 80, 30, 5); // Rounded corners
-            option.add(buttonBackground);
-
-            // Button Text
-            const buttonText = this.scene.add.text(optionWidth - 100, optionHeight / 2, 'Select', {
-                fontSize: '16px',
-                color: '#ffffff',
-                fontFamily: 'Arial'
-            }).setOrigin(0.5, 0.5).setInteractive();
-            buttonText.on('pointerdown', () => {
-                console.log(`Selected: ${data.title}`);
-            });
-            option.add(buttonText);
-
-            option.setPosition(-200, -100 + i * (optionHeight + spacing));
+        
+            // Justér position af valgmuligheden
+            const startX = -280;
+            const cardPositionX = startX + i * (optionWidth + spacing);
+            option.setPosition(cardPositionX, -50);
+            
+            // Opret og placer knappen
+            const button = new Button(this.scene, cardPositionX + optionWidth / 2, 100, 'Tryk her', () => this.handleButtonClick());
+        
+            // Tilføj valgmuligheden til menuen
             this.menu.add(option);
             this.powerUpOptions.push(option);
-        }
+    
+            // Tilføj knappen til menuen
+            this.menu.add(button.getButton());
+        }    
+    
+        // Skjul menuen som standard
+        this.menu.setVisible(false);
     }
 
+    private handleButtonClick(): void {
+        console.log("knappen er trykket på");
+        this.hide()
+    }
+
+    // Metode til at vise menuen
     show(level: number): void {
         this.levelText.setText(`Level Up! You are now level ${level}`);
         this.menu.setVisible(true);
     }
 
+    // Metode til at skjule menuen
     hide(): void {
         this.menu.setVisible(false);
+        this.scene.scene.resume(); // Genoptager spillet
     }
 }

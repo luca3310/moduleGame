@@ -22,6 +22,7 @@ export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
+  private levelUpMenu!: LevelUpMenu; // Ensure this is declared
   private isDashing: boolean = false;
   private dashEndTime: number = 0;
   private dashCooldownEnd: number = 0;
@@ -38,7 +39,6 @@ export default class MyGame extends Phaser.Scene {
   private fireRate: number = 1000;
   private timer!: Timer;
   private killCounter!: KillCounter;
-  private levelUpMenu!: LevelUpMenu; // Ensure this is declared
 
 
   constructor() {
@@ -89,9 +89,9 @@ export default class MyGame extends Phaser.Scene {
     bulletCollision.call(this);
     createXp.call(this);
 
-    // Initialize and create LevelUpMenu
     this.levelUpMenu = new LevelUpMenu(this);
-    this.levelUpMenu.create(); // Ensure it is created before accessing
+    this.levelUpMenu.preload();
+
 
     this.leftMouseButton = this.input.activePointer;
     this.dashCooldownBar = this.add.graphics();
@@ -122,9 +122,11 @@ update(time: number, delta: number): void {
     if (this.player.xp >= this.player.xpToNextLevel) {
       this.player.level++;
       console.log("here ");
+      this.levelUpMenu.create(); // Tilføj denne linje efter preload
       
       this.player.xp -= this.player.xpToNextLevel;
       this.player.xpToNextLevel *= 1.5;
+      
       this.player.levelUp = true;
   
       // Vis level-up menu
@@ -166,6 +168,8 @@ update(time: number, delta: number): void {
     this.input.keyboard.on("keydown-P", () => this.togglePause());
   }
 
+
+
   private updateUI(): void {
     if (this.levelBar) {
       this.levelBar.updateLevel(this.player.level);
@@ -190,6 +194,20 @@ update(time: number, delta: number): void {
         this.reloadBar.startReload();
       }
     }
+  }
+
+  public toggleLevelUpMenu(): void {
+    if (this.isPaused) {
+      console.log("pause menu fremme")
+      this.scene.resume("MyGame")
+      this.scene.pause("LevelUpMenu");
+    }
+    else {
+      console.log("Launching pause menu");
+      this.scene.pause("MyGame");
+      this.scene.launch("LevelUpMenu");
+    } 
+    this.isPaused = !this.isPaused;
   }
 
   public togglePause(): void {
