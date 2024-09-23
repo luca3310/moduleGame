@@ -17,6 +17,8 @@ import KillCounter from "./ui/KillCounter";
 import { PlayerWithStats } from "./player/PlayerStats";
 import HealthBar from "./ui/HealthBar";
 import LevelUpMenu from "./LevelUpMenu";
+import createTiles from "./tiles/createTiles";
+import updateTiles from "./tiles/updateTiles";
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
@@ -40,7 +42,6 @@ export default class MyGame extends Phaser.Scene {
   private killCounter!: KillCounter;
   private levelUpMenu!: LevelUpMenu; // Ensure this is declared
 
-
   constructor() {
     super({ key: "MyGame" });
   }
@@ -54,8 +55,12 @@ export default class MyGame extends Phaser.Scene {
     this.load.image("enemyWalk1", "assets/Enemy/zombie_walk1.png");
     this.load.image("enemyWalk2", "assets/Enemy/zombie_walk2.png");
 
+    this.load.image("tile1", "assets/Tiled/tile_0000.png");
+    this.load.image("tile2", "assets/Tiled/tile_0001.png");
+    this.load.image("tile3", "assets/Tiled/tile_0002.png");
+
     this.load.audio("ambience", "assets/Music/Zombies.mp3");
-    this.load.json('powerUps', 'assets/powerUps.json');
+    this.load.json("powerUps", "assets/powerUps.json");
     // You can load other assets like images here
   }
 
@@ -80,6 +85,7 @@ export default class MyGame extends Phaser.Scene {
     bulletCollision.call(this);
     createXp.call(this);
 
+    createTiles.call(this);
     // Initialize and create LevelUpMenu
     this.levelUpMenu = new LevelUpMenu(this);
     this.levelUpMenu.create(); // Ensure it is created before accessing
@@ -93,9 +99,9 @@ export default class MyGame extends Phaser.Scene {
       volume: 0.5,
     });
     music.play();
-}
+  }
 
-update(time: number, delta: number): void {
+  update(time: number, delta: number): void {
     if (this.isPaused) return;
 
     updatePlayerMovement.call(this);
@@ -113,14 +119,16 @@ update(time: number, delta: number): void {
     if (this.player.xp >= this.player.xpToNextLevel) {
       this.player.level++;
       console.log("here ");
-      
+
       this.player.xp -= this.player.xpToNextLevel;
       this.player.xpToNextLevel *= 1.5;
       this.player.levelUp = true;
-  
+
       // Vis level-up menu
       this.levelUpMenu.show(this.player.level);
     }
+
+    updateTiles.call(this);
   }
 
   private initializePlayer(centerX: number, centerY: number): void {
@@ -162,15 +170,14 @@ update(time: number, delta: number): void {
       this.levelBar.updateLevel(this.player.level);
       this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
     }
-  
+
     if (this.reloadBar) {
       this.reloadBar.update();
     }
-  
+
     if (this.healthBar) {
       this.healthBar.updateHealth(this.player.stats.health);
     }
-  
   }
 
   private handleBulletFiring(time: number): void {
