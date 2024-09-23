@@ -1,22 +1,27 @@
 import Phaser from 'phaser';
-import createPlayer from './player/createPlayer';
-import updatePlayerMovement from './player/updatePlayerMovement';
-import keybinds from './keybinds';
-import createCamera from './camera/createCamera';
-import createEnemySpawner from './enemySpawner/createEnemySpawner';
-import updateEnemyMovement from './enemy/updateEnemyMovement';
-import createEnemy from './enemy/createEnemy';
-import createBullet from './bullet/createBullet';
-import spawnBullet from './bullet/spawnBullet';
-import createXp from './xp/createXp';
-import bulletCollision from './bullet/bulletCollision';
-import LevelBar from './ui/LevelBar';
-import ReloadBar from './ui/ReloadBar';
-import Timer from './ui/Timer';
-import KillCounter from './ui/KillCounter';
-import { PlayerWithStats } from './player/PlayerStats';
-import HealthBar from './ui/HealthBar';
-import LevelUpMenu from './LevelUpMenu';
+import createPlayer from '../player/createPlayer';
+import updatePlayerMovement from '../player/updatePlayerMovement';
+import keybinds from '../keybinds';
+import createCamera from '../camera/createCamera';
+import createEnemySpawner from '../enemySpawner/createEnemySpawner';
+import updateEnemyMovement from '../enemy/updateEnemyMovement';
+import createEnemy from '../enemy/createEnemy';
+import createBullet from '../bullet/createBullet';
+import spawnBullet from '../bullet/spawnBullet';
+import createXp from '../xp/createXp';
+import bulletCollision from '../bullet/bulletCollision';
+import LevelBar from '../ui/LevelBar';
+import ReloadBar from '../ui/ReloadBar';
+import Timer from '../ui/Timer';
+import KillCounter from '../ui/KillCounter';
+import { PlayerWithStats } from '../player/PlayerStats';
+import HealthBar from '../ui/HealthBar';
+import LevelUpMenu from '../LevelUpMenu';
+import createTiles from '../tiles/createTiles';
+import updateTiles from '../tiles/updateTiles';
+import { preload } from './preload';
+import create from './create';
+import update from './update';
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
@@ -45,94 +50,27 @@ export default class MyGame extends Phaser.Scene {
   }
 
   handlePlayerHit(damage: number): void {
-    this.player.stats.health = Math.max(this.player.stats.health - damage, 0); // Sørg for, at health ikke går under 0
-    this.healthBar.updateHealth(this.player.stats.health); // Opdater sundhedsbaren
+    this.player.stats.health = Math.max(this.player.stats.health - damage, 0);
+    this.healthBar.updateHealth(this.player.stats.health);
+
     if (this.player.stats.health <= 0) {
       console.log('Spilleren er død');
-      // Eventuel logik for når spilleren dør
+      this.scene.launch('GameOverMenu'); // Vis Game Over menu
+      this.scene.pause(); // Pause spillet
+      this.scene.bringToTop("GameOverMenu");
     }
   }
 
   preload(): void {
-    this.load.image('playerStand', 'assets/Player/player_stand.png');
-    this.load.image('playerWalk1', 'assets/Player/player_walk1.png');
-    this.load.image('playerWalk2', 'assets/Player/player_walk2.png');
-    this.load.image('bullet', 'assets/weapons/rock.png');
-    this.load.image('enemyStand', 'assets/Enemy/zombie_stand.png');
-    this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
-    this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');
-
-    this.load.audio('ambience', 'assets/Music/Zombies.mp3');
-    this.load.audio('heartbeatLow', 'assets/Sounds/heartbeatLow.mp3');
-    this.load.audio('heartbeatMedium', 'assets/Sounds/heartbeatMedium.mp3');
-    this.load.audio('heartbeatHigh', 'assets/Sounds/heartbeatHigh.mp3');
-    this.load.audio('zombieHit', 'assets/Sounds/Zombie/163447__under7dude__zombie-hit.wav');
-    this.load.json('powerUps', 'assets/powerUps.json');
-    // You can load other assets like images here
+    preload.call(this);
   }
 
   create(): void {
-    const centerX = this.cameras.main.width / 2;
-    const centerY = this.cameras.main.height / 2;
-
-    this.bullets = this.add.group({
-      classType: Phaser.Physics.Arcade.Sprite,
-      runChildUpdate: true,
-    });
-
-    this.initializePlayer(centerX, centerY); // Opretter spiller og sundhedsbar
-    this.initializeUI();
-    this.initializeInput();
-
-    createCamera.call(this);
-    keybinds.call(this, Phaser);
-    createEnemy.call(this);
-    createEnemySpawner.call(this);
-    createBullet.call(this);
-    bulletCollision.call(this);
-    createXp.call(this);
-
-    // Initialize and create LevelUpMenu
-    this.levelUpMenu = new LevelUpMenu(this);
-    this.levelUpMenu.create(); // Ensure it is created before accessing
-
-    this.leftMouseButton = this.input.activePointer;
-    this.dashCooldownBar = this.add.graphics();
-
-    // Play background music
-    const ambience = this.sound.add('ambience', {
-      loop: true,
-      volume: 0.5,
-    });
-    ambience.play();
+    create.call(this); // Kald den nye create metode
   }
 
   update(time: number, delta: number): void {
-    if (this.isPaused) return;
-
-    updatePlayerMovement.call(this);
-    updateEnemyMovement.call(this);
-    this.updateUI();
-    this.handleBulletFiring(time);
-    this.updateDashCooldownBar(time);
-    this.timer.update(delta);
-
-    // Sørg for, at sundhedsbaren følger spilleren
-    if (this.healthBar) {
-      this.healthBar.updatePosition(this.player.x, this.player.y); // Opdater sundhedsbarens position til at følge spilleren
-    }
-
-    if (this.player.xp >= this.player.xpToNextLevel) {
-      this.player.level++;
-      console.log('here ');
-
-      this.player.xp -= this.player.xpToNextLevel;
-      this.player.xpToNextLevel *= 1.5;
-      this.player.levelUp = true;
-
-      // Vis level-up menu
-      this.levelUpMenu.show(this.player.level);
-    }
+    update.call(this, time, delta); // Kald den nye update metode
   }
 
   private initializePlayer(centerX: number, centerY: number): void {
@@ -196,13 +134,14 @@ export default class MyGame extends Phaser.Scene {
 
   public togglePause(): void {
     if (this.isPaused) {
-      console.log('Resuming game and stopping pause menu');
       this.scene.resume('MyGame');
       this.scene.stop('PauseMenu');
     } else {
-      console.log('Pausing game and launching pause menu');
       this.scene.pause('MyGame');
+
       this.scene.launch('PauseMenu');
+      this.scene.bringToTop("PauseMenu")
+      
     }
     this.isPaused = !this.isPaused;
   }
@@ -250,9 +189,9 @@ export default class MyGame extends Phaser.Scene {
       const barWidth = this.dashCooldownMaxWidth * cooldownPercentage;
 
       const barX = this.player.x - this.dashCooldownMaxWidth / 2;
-      const barY = this.player.y + 40;
+      const barY = this.player.y + 30;
 
-      this.dashCooldownBar.fillStyle(0xffffff, 1);
+      this.dashCooldownBar.fillStyle(0xff0000, 1);
       this.dashCooldownBar.fillRect(barX, barY, barWidth, this.dashCooldownHeight);
     }
   }

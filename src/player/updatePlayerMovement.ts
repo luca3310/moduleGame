@@ -1,11 +1,10 @@
 export default function updatePlayerMovement() {
-  const normalSpeed = 160;
+  const normalSpeed = this.player.stats.speed; // Hent hastighed fra stats
   const dashSpeed = 10000; // Speed during dash
   const dashDuration = 200; // Dash lasts for 200ms
   const dashCooldown = 1000; // Cooldown for 1 second
 
   let speed = normalSpeed; // Default speed
-
   let isMoving = false; // Variable to check if the player is moving
 
   // Check if dash key (Space) is pressed and dash is available
