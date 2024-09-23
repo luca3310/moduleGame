@@ -43,17 +43,28 @@ export default class MyGame extends Phaser.Scene {
   private levelUpMenu!: LevelUpMenu; // Ensure this is declared
 
   constructor() {
-    super({ key: "MyGame" });
+    super({ key: 'MyGame' });
+  }
+
+  handlePlayerHit(damage: number): void {
+    this.player.stats.health = Math.max(this.player.stats.health - damage, 0);
+    this.healthBar.updateHealth(this.player.stats.health);
+    
+    if (this.player.stats.health <= 0) {
+      console.log('Spilleren er død');
+      this.scene.launch("GameOverMenu"); // Vis Game Over menu
+      this.scene.pause(); // Pause spillet
+    }
   }
 
   preload(): void {
-    this.load.image("playerStand", "assets/Player/player_stand.png");
-    this.load.image("playerWalk1", "assets/Player/player_walk1.png");
-    this.load.image("playerWalk2", "assets/Player/player_walk2.png");
-    this.load.image("bullet", "assets/weapons/rock.png");
-    this.load.image("enemyStand", "assets/Enemy/zombie_stand.png");
-    this.load.image("enemyWalk1", "assets/Enemy/zombie_walk1.png");
-    this.load.image("enemyWalk2", "assets/Enemy/zombie_walk2.png");
+    this.load.image('playerStand', 'assets/Player/player_stand.png');
+    this.load.image('playerWalk1', 'assets/Player/player_walk1.png');
+    this.load.image('playerWalk2', 'assets/Player/player_walk2.png');
+    this.load.image('bullet', 'assets/weapons/rock.png');
+    this.load.image('enemyStand', 'assets/Enemy/zombie_stand.png');
+    this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
+    this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');
 
     this.load.image("tile1", "assets/Tiled/tile_0000.png");
     this.load.image("tile2", "assets/Tiled/tile_0001.png");
@@ -94,7 +105,7 @@ export default class MyGame extends Phaser.Scene {
     this.dashCooldownBar = this.add.graphics();
 
     // Play background music
-    const music = this.sound.add("ambience", {
+    const ambience = this.sound.add('ambience', {
       loop: true,
       volume: 0.5,
     });
@@ -113,7 +124,7 @@ export default class MyGame extends Phaser.Scene {
 
     // Sørg for, at sundhedsbaren følger spilleren
     if (this.healthBar) {
-      this.healthBar.updatePosition();
+      this.healthBar.updatePosition(this.player.x, this.player.y); // Opdater sundhedsbarens position til at følge spilleren
     }
 
     if (this.player.xp >= this.player.xpToNextLevel) {
@@ -154,15 +165,15 @@ export default class MyGame extends Phaser.Scene {
     this.reloadBar.create();
 
     this.healthBar = new HealthBar(this, this.player);
-    this.healthBar.create(); // Opret sundhedsbaren og knyt den til spilleren
+    this.healthBar.create(this.player.x, this.player.y); // Opret sundhedsbaren med spillerens startposition
 
     this.timer = new Timer(this);
     this.killCounter = new KillCounter(this);
   }
 
   private initializeInput(): void {
-    this.input.keyboard.on("keydown-ESC", () => this.togglePause());
-    this.input.keyboard.on("keydown-P", () => this.togglePause());
+    this.input.keyboard.on('keydown-ESC', () => this.togglePause());
+    this.input.keyboard.on('keydown-P', () => this.togglePause());
   }
 
   private updateUI(): void {
@@ -192,22 +203,17 @@ export default class MyGame extends Phaser.Scene {
 
   public togglePause(): void {
     if (this.isPaused) {
-      console.log("Resuming game and stopping pause menu");
-      this.scene.resume("MyGame");
-      this.scene.stop("PauseMenu");
+      this.scene.resume('MyGame');
+      this.scene.stop('PauseMenu');
     } else {
-      console.log("Pausing game and launching pause menu");
-      this.scene.pause("MyGame");
-      this.scene.launch("PauseMenu");
+      this.scene.pause('MyGame');
+      this.scene.launch('PauseMenu');
     }
     this.isPaused = !this.isPaused;
   }
 
   public resetGame(): void {
-    this.initializePlayer(
-      this.cameras.main.width / 2,
-      this.cameras.main.height / 2,
-    );
+    this.initializePlayer(this.cameras.main.width / 2, this.cameras.main.height / 2);
     this.levelBar.updateLevel(this.player.level);
     this.levelBar.updateXP(this.player.xp, this.player.xpToNextLevel);
 
@@ -228,7 +234,7 @@ export default class MyGame extends Phaser.Scene {
   updatePlayerStats(statName: string, value: number): void {
     if (this.player.stats.hasOwnProperty(statName)) {
       this.player.stats[statName] = value;
-      this.events.emit("statsChanged", this.player.stats);
+      this.events.emit('statsChanged', this.player.stats);
     }
   }
 
@@ -249,15 +255,10 @@ export default class MyGame extends Phaser.Scene {
       const barWidth = this.dashCooldownMaxWidth * cooldownPercentage;
 
       const barX = this.player.x - this.dashCooldownMaxWidth / 2;
-      const barY = this.player.y + 40;
+      const barY = this.player.y + 30;
 
-      this.dashCooldownBar.fillStyle(0xffffff, 1);
-      this.dashCooldownBar.fillRect(
-        barX,
-        barY,
-        barWidth,
-        this.dashCooldownHeight,
-      );
+      this.dashCooldownBar.fillStyle(0xff0000, 1);
+      this.dashCooldownBar.fillRect(barX, barY, barWidth, this.dashCooldownHeight);
     }
   }
 }
