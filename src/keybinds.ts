@@ -10,4 +10,6 @@ export default function keybinds(Phaser: any) {
 
   // Mouse button
   this.leftMouseButton = this.input.activePointer;
+  
+
 }

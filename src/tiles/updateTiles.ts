@@ -1,49 +1,15 @@
 export default function updateTiles() {
-  // Clear the previous rectangle
-  this.testCamera.clear();
-
-  // Set the line style again after clearing
-  this.testCamera.lineStyle(1, 0x0000ff); // 1px thick blue outline
-
-  // Draw the rectangle at the player's current position
-  const rectWidth = 1000;
-  const rectHeight = 600;
-
-  this.testCamera.strokeRect(
-    this.player.x - 500,
-    this.player.y - 300,
-    rectWidth,
-    rectHeight,
-  );
-
-  // Clear the previous rectangle
-  this.tileOutline.clear();
-
-  // Set the line style again after clearing
-  this.tileOutline.lineStyle(1, 0x00ff00); // 1px thick green outline
-
-  // Draw the rectangle at the player's current position
-  const rectWidth2 = 1200;
-  const rectHeight2 = 800;
-
-  this.tileOutline.strokeRect(
-    this.player.x - 600,
-    this.player.y - 400,
-    rectWidth2,
-    rectHeight2,
-  );
-
   // Now, update the tiles
   const tileScale = 4;
   const tileSize =
     this.textures.get("tile1").getSourceImage().width * tileScale;
 
   // Function to check if a position is within the tileOutline
-  const isWithinTileOutline = (x, y) => {
-    const minX = this.player.x - 600;
-    const maxX = this.player.x + 600;
-    const minY = this.player.y - 400;
-    const maxY = this.player.y + 400;
+  const isWithinTileOutline = (x: number, y: number) => {
+    const minX = this.player.x - 3000;
+    const maxX = this.player.x + 3000;
+    const minY = this.player.y - 3000;
+    const maxY = this.player.y + 3000;
     return x >= minX && x < maxX && y >= minY && y < maxY;
   };
 
@@ -105,7 +71,7 @@ export default function updateTiles() {
     newTile.x = pos.x;
     newTile.y = pos.y;
     newTile.setScale(tileScale, tileScale); // Apply the scale
-    newTile.setDepth(0); // Set the depth for the tiles
+    newTile.setDepth(-1); // Set the depth for the tiles
   }
 
   // Remove tiles that are outside of the tileOutline

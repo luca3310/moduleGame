@@ -21,6 +21,7 @@ export default class LevelUpMenu {
         // Opretter menu-containeren
         this.menu = this.scene.add.container(this.scene.cameras.main.width / 2, this.scene.cameras.main.height / 2);
         this.menu.setScrollFactor(1); // Holder menuen fast på skærmen
+        this.menu.setDepth(4)
 
         // Initialiserer interactiveGroup
         this.interactiveGroup = this.scene.add.group();
