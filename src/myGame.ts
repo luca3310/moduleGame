@@ -108,7 +108,7 @@ export default class MyGame extends Phaser.Scene {
     // Play background music
     const ambience = this.sound.add('ambience', {
       loop: true,
-      volume: 0.5,
+      volume: 1,
     });
     ambience.play();
   }
