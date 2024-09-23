@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import MainMenu from "./mainMenu";
 import MyGame from "./myGame";
 import PauseMenu from "./PauseMenu";
+import GameOverMenu from "./GameOverMenu";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -15,7 +16,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [MainMenu, MyGame, PauseMenu], // Tilføj alle scener her
+  scene: [MainMenu, MyGame, PauseMenu, GameOverMenu],
 };
 
 new Phaser.Game(config);

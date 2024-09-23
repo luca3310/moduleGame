@@ -45,11 +45,13 @@ export default class MyGame extends Phaser.Scene {
   }
 
   handlePlayerHit(damage: number): void {
-    this.player.stats.health = Math.max(this.player.stats.health - damage, 0); // Sørg for, at health ikke går under 0
-    this.healthBar.updateHealth(this.player.stats.health); // Opdater sundhedsbaren
+    this.player.stats.health = Math.max(this.player.stats.health - damage, 0);
+    this.healthBar.updateHealth(this.player.stats.health);
+    
     if (this.player.stats.health <= 0) {
       console.log('Spilleren er død');
-      // Eventuel logik for når spilleren dør
+      this.scene.launch("GameOverMenu"); // Vis Game Over menu
+      this.scene.pause(); // Pause spillet
     }
   }
 

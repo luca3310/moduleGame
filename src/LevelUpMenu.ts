@@ -7,6 +7,7 @@ export default class LevelUpMenu {
     private levelText!: Phaser.GameObjects.Text;
     private powerUpOptions: Phaser.GameObjects.Container[] = [];
     private interactiveGroup!: Phaser.GameObjects.Group;
+    private levelQueue: number[] = []; // Kø til level-ups
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -19,7 +20,7 @@ export default class LevelUpMenu {
     create(): void {
         // Opretter menu-containeren
         this.menu = this.scene.add.container(this.scene.cameras.main.width / 2, this.scene.cameras.main.height / 2);
-        this.menu.setScrollFactor(0); // Holder menuen fast på skærmen
+        this.menu.setScrollFactor(1); // Holder menuen fast på skærmen
 
         // Initialiserer interactiveGroup
         this.interactiveGroup = this.scene.add.group();
@@ -128,11 +129,33 @@ export default class LevelUpMenu {
 
     private handleButtonClick(): void {
         console.log("knappen er trykket på");
-        this.hide(); // Skjul menuen, når knappen trykkes
+
+        // Fjern én level fra køen
+        this.levelQueue.shift();
+
+        // Tjek om der er flere level-ups i køen
+        if (this.levelQueue.length > 0) {
+            this.showNextLevelUp(); // Vis næste level-up, hvis der er flere
+        } else {
+            this.hide(); // Skjul menuen, når alle level-ups er valgt
+        }
     }
 
     show(level: number): void {
-        this.levelText.setText(`Level Up! You are now level ${level}`);
+        // Tilføj level til køen, hvis der er flere level-ups
+        for (let i = this.levelQueue[this.levelQueue.length - 1] || 0; i < level; i++) {
+            this.levelQueue.push(i + 1);
+        }
+
+        // Hvis level-up-menuen ikke er synlig, vis den første
+        if (!this.menu.visible) {
+            this.showNextLevelUp();
+        }
+    }
+
+    private showNextLevelUp(): void {
+        const nextLevel = this.levelQueue[0];
+        this.levelText.setText(`Level Up! You are now level ${nextLevel}`);
         this.menu.setVisible(true);
 
         // Gør knapperne interaktive igen, når menuen vises
