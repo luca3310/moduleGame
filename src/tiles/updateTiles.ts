@@ -6,10 +6,10 @@ export default function updateTiles() {
 
   // Function to check if a position is within the tileOutline
   const isWithinTileOutline = (x: number, y: number) => {
-    const minX = this.player.x - 3000;
-    const maxX = this.player.x + 3000;
-    const minY = this.player.y - 3000;
-    const maxY = this.player.y + 3000;
+    const minX = this.player.x - 1500;
+    const maxX = this.player.x + 1500;
+    const minY = this.player.y - 1500;
+    const maxY = this.player.y + 1500;
     return x >= minX && x < maxX && y >= minY && y < maxY;
   };
 
