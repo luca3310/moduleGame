@@ -1,24 +1,24 @@
-import Phaser from "phaser";
-import createPlayer from "./player/createPlayer";
-import updatePlayerMovement from "./player/updatePlayerMovement";
-import keybinds from "./keybinds";
-import createCamera from "./camera/createCamera";
-import createEnemySpawner from "./enemySpawner/createEnemySpawner";
-import updateEnemyMovement from "./enemy/updateEnemyMovement";
-import createEnemy from "./enemy/createEnemy";
-import createBullet from "./bullet/createBullet";
-import spawnBullet from "./bullet/spawnBullet";
-import createXp from "./xp/createXp";
-import bulletCollision from "./bullet/bulletCollision";
-import LevelBar from "./ui/LevelBar";
-import ReloadBar from "./ui/ReloadBar";
-import Timer from "./ui/Timer";
-import KillCounter from "./ui/KillCounter";
-import { PlayerWithStats } from "./player/PlayerStats";
-import HealthBar from "./ui/HealthBar";
-import LevelUpMenu from "./LevelUpMenu";
-import createTiles from "./tiles/createTiles";
-import updateTiles from "./tiles/updateTiles";
+import Phaser from 'phaser';
+import createPlayer from './player/createPlayer';
+import updatePlayerMovement from './player/updatePlayerMovement';
+import keybinds from './keybinds';
+import createCamera from './camera/createCamera';
+import createEnemySpawner from './enemySpawner/createEnemySpawner';
+import updateEnemyMovement from './enemy/updateEnemyMovement';
+import createEnemy from './enemy/createEnemy';
+import createBullet from './bullet/createBullet';
+import spawnBullet from './bullet/spawnBullet';
+import createXp from './xp/createXp';
+import bulletCollision from './bullet/bulletCollision';
+import LevelBar from './ui/LevelBar';
+import ReloadBar from './ui/ReloadBar';
+import Timer from './ui/Timer';
+import KillCounter from './ui/KillCounter';
+import { PlayerWithStats } from './player/PlayerStats';
+import HealthBar from './ui/HealthBar';
+import LevelUpMenu from './LevelUpMenu';
+import createTiles from './tiles/createTiles';
+import updateTiles from './tiles/updateTiles';
 
 export default class MyGame extends Phaser.Scene {
   private player!: PlayerWithStats;
@@ -49,10 +49,10 @@ export default class MyGame extends Phaser.Scene {
   handlePlayerHit(damage: number): void {
     this.player.stats.health = Math.max(this.player.stats.health - damage, 0);
     this.healthBar.updateHealth(this.player.stats.health);
-    
+
     if (this.player.stats.health <= 0) {
       console.log('Spilleren er død');
-      this.scene.launch("GameOverMenu"); // Vis Game Over menu
+      this.scene.launch('GameOverMenu'); // Vis Game Over menu
       this.scene.pause(); // Pause spillet
     }
   }
@@ -66,12 +66,13 @@ export default class MyGame extends Phaser.Scene {
     this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
     this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');
 
-    this.load.image("tile1", "assets/Tiled/tile_0000.png");
-    this.load.image("tile2", "assets/Tiled/tile_0001.png");
-    this.load.image("tile3", "assets/Tiled/tile_0002.png");
+    this.load.image('tile1', 'assets/Tiled/tile_0000.png');
+    this.load.image('tile2', 'assets/Tiled/tile_0001.png');
+    this.load.image('tile3', 'assets/Tiled/tile_0002.png');
 
-    this.load.audio("ambience", "assets/Music/Zombies.mp3");
-    this.load.json("powerUps", "assets/powerUps.json");
+    this.load.audio('ambience', 'assets/Music/Zombies.mp3');
+    this.load.audio('zombieHit', 'assets/Sounds/Zombie/163447__under7dude__zombie-hit.wav');
+    this.load.json('powerUps', 'assets/powerUps.json');
     // You can load other assets like images here
   }
 
@@ -129,7 +130,7 @@ export default class MyGame extends Phaser.Scene {
 
     if (this.player.xp >= this.player.xpToNextLevel) {
       this.player.level++;
-      console.log("here ");
+      console.log('here ');
 
       this.player.xp -= this.player.xpToNextLevel;
       this.player.xpToNextLevel *= 1.5;
