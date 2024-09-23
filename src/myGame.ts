@@ -109,7 +109,7 @@ export default class MyGame extends Phaser.Scene {
       loop: true,
       volume: 0.5,
     });
-    music.play();
+    ambience.play();
   }
 
   update(time: number, delta: number): void {
