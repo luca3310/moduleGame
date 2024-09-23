@@ -124,8 +124,6 @@ export default class MyGame extends Phaser.Scene {
 
     if (this.player.xp >= this.player.xpToNextLevel) {
       this.player.level++;
-      console.log('here ');
-
       this.player.xp -= this.player.xpToNextLevel;
       this.player.xpToNextLevel *= 1.5;
       this.player.levelUp = true;
@@ -196,11 +194,9 @@ export default class MyGame extends Phaser.Scene {
 
   public togglePause(): void {
     if (this.isPaused) {
-      console.log('Resuming game and stopping pause menu');
       this.scene.resume('MyGame');
       this.scene.stop('PauseMenu');
     } else {
-      console.log('Pausing game and launching pause menu');
       this.scene.pause('MyGame');
       this.scene.launch('PauseMenu');
     }
@@ -250,9 +246,9 @@ export default class MyGame extends Phaser.Scene {
       const barWidth = this.dashCooldownMaxWidth * cooldownPercentage;
 
       const barX = this.player.x - this.dashCooldownMaxWidth / 2;
-      const barY = this.player.y + 40;
+      const barY = this.player.y + 30;
 
-      this.dashCooldownBar.fillStyle(0xffffff, 1);
+      this.dashCooldownBar.fillStyle(0xff0000, 1);
       this.dashCooldownBar.fillRect(barX, barY, barWidth, this.dashCooldownHeight);
     }
   }
