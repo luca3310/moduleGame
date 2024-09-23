@@ -1,5 +1,5 @@
 export default function createTiles() {
-  const tileScale = 4; // Scale factor for the tiles
+  const tileScale = 4; 
 
 
 
