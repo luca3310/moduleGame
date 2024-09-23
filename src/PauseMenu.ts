@@ -1,6 +1,6 @@
 // PauseMenu.ts
 import Phaser from "phaser";
-import MyGame from "./myGame";
+import MyGame from "./myGame/myGame";
 
 export default class PauseMenu extends Phaser.Scene {
   private resumeButton!: Phaser.GameObjects.Text;
@@ -12,17 +12,13 @@ export default class PauseMenu extends Phaser.Scene {
     super({ key: "PauseMenu" });
   }
 
-  preload(): void {
-    // Preload eventuelt assets her
-  }
-
   create(): void {
     const { width, height } = this.cameras.main;
 
     // Baggrund for PauseMenu
     this.background = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.7);
     this.background.setOrigin(0.5);
-    this.background.setDepth(1000);
+    this.background.setDepth(2);
 
     // Resume Button
     this.resumeButton = this.add.text(width / 2, height / 2 - 50, "Resume", {
@@ -33,7 +29,7 @@ export default class PauseMenu extends Phaser.Scene {
     })
       .setOrigin(0.5)
       .setInteractive();
-    this.resumeButton.setDepth(1001);
+    this.resumeButton.setDepth(3);
 
     // Quit Button
     this.quitButton = this.add.text(width / 2, height / 2 + 50, "Quit", {
@@ -44,7 +40,7 @@ export default class PauseMenu extends Phaser.Scene {
     })
       .setOrigin(0.5)
       .setInteractive();
-    this.quitButton.setDepth(1001);
+    this.quitButton.setDepth(3);
 
     // Lyttere for Resume og Quit knapper
     this.resumeButton.on("pointerdown", () => this.resumeGame());
@@ -73,7 +69,7 @@ export default class PauseMenu extends Phaser.Scene {
       this.playerStats[stat] = this.add.text(statX, statY, `${stat}: --`, fontStyle)
         .setOrigin(0, 0)
         .setScrollFactor(0)
-        .setDepth(1001);
+        .setDepth(2);
 
       statY += 40; // Flyt Y-positionen ned for næste stat
     }

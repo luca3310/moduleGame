@@ -1,29 +1,7 @@
 export default function createTiles() {
-  const rectWidth2 = 1200; // Width of the tileOutline
-  const rectHeight2 = 800; // Height of the tileOutline
-  const tileScale = 4; // Scale factor for the tiles
+  const tileScale = 4; 
 
-  // Create the tileOutline
-  this.tileOutline = this.add.graphics();
-  this.tileOutline.lineStyle(1, 0x00ff00); // 1px thick green outline
-  this.tileOutline.strokeRect(
-    this.player.x - 600,
-    this.player.y - 400,
-    rectWidth2,
-    rectHeight2,
-  );
 
-  // Create an outlined rectangle using the Graphics object
-  this.testCamera = this.add.graphics();
-  this.testCamera.lineStyle(1, 0x0000ff); // 1px thick blue outline
-  const rectWidth = 1000;
-  const rectHeight = 600;
-  this.testCamera.strokeRect(
-    this.player.x - 500,
-    this.player.y - 300,
-    rectWidth,
-    rectHeight,
-  );
 
   // Define tile groups for different types of tiles
   this.tiles1 = this.physics.add.group({ defaultKey: "tile1" });
@@ -61,13 +39,10 @@ export default function createTiles() {
       tile.x = x;
       tile.y = y;
       tile.setScale(tileScale, tileScale); // Apply the scale
-      tile.setDepth(0); // Set the depth for the tiles
+      tile.setDepth(-1); // Set the depth for the tiles
 
       // Add tile position to the set
       this.tilePositions.add(`${x},${y}`);
     }
   }
-
-  // Set the player's depth higher than the tiles so it appears on top
-  this.player.setDepth(1);
 }

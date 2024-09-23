@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import MyGame from "./myGame";
+import MyGame from "./myGame/myGame";
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {

@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import MainMenu from "./mainMenu";
-import MyGame from "./myGame";
+import MyGame from "./myGame/myGame";
 import PauseMenu from "./PauseMenu";
 import GameOverMenu from "./GameOverMenu";
 
