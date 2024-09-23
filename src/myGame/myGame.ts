@@ -57,6 +57,7 @@ export default class MyGame extends Phaser.Scene {
       console.log('Spilleren er død');
       this.scene.launch('GameOverMenu'); // Vis Game Over menu
       this.scene.pause(); // Pause spillet
+      this.scene.bringToTop("GameOverMenu");
     }
   }
 
@@ -137,7 +138,10 @@ export default class MyGame extends Phaser.Scene {
       this.scene.stop('PauseMenu');
     } else {
       this.scene.pause('MyGame');
+
       this.scene.launch('PauseMenu');
+      this.scene.bringToTop("PauseMenu")
+      
     }
     this.isPaused = !this.isPaused;
   }
