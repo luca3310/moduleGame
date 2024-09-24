@@ -1,6 +1,10 @@
 [
-    { "imageKey": "powerUp1", "title": "Power Up 1", "description": "Increase damage by 10%" },
-    { "imageKey": "powerUp2", "title": "Power Up 2", "description": "Boost speed by 20%" },
-    { "imageKey": "powerUp3", "title": "Power Up 3", "description": "Enhance health by 32%" },
-    { "imageKey": "powerUp4", "title": "Power Up 4", "description": "Reduce cooldown by 15%" }
+    { "imageKey": "powerUpDamage", "title": "Damage Boost", "description": "Increase damage by 10%" },
+    { "imageKey": "powerUpSpeed", "title": "Speed Boost", "description": "Boost speed by 20%" },
+    { "imageKey": "powerUpHealth", "title": "Health Increase", "description": "Enhance health by 32%" },
+    { "imageKey": "powerUpCooldown", "title": "Cooldown Reduction", "description": "Reduce cooldown by 15%" },
+    { "imageKey": "powerUpFireRate", "title": "Fire Rate Boost", "description": "Increase fire rate by 25%" },
+    { "imageKey": "powerUpDashSpeed", "title": "Dash Speed", "description": "Increase dash speed by 15%" },
+    { "imageKey": "powerUpDashDuration", "title": "Dash Duration", "description": "Extend dash duration by 2 seconds" },
+    { "imageKey": "powerUpBulletSpeed", "title": "Bullet Speed", "description": "Increase bullet speed by 30%" }
 ]

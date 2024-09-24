@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import MainMenu from "./mainMenu/mainMenu";
 import MyGame from "./myGame/myGame";
-import PauseMenu from "./PauseMenu";
+import PauseMenu from "./pauseMenu/PauseMenu";
 import GameOverMenu from "./gameOverMenu/GameOverMenu";
 
 const config: Phaser.Types.Core.GameConfig = {
