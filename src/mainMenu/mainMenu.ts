@@ -51,7 +51,6 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   private openSettings(): void {
-    // Her kan du implementere logik til at åbne indstillingsmenuen
-    console.log("Open Settings Menu");
+    this.scene.start("SettingsMenu");
   }
 }

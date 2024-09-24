@@ -5,10 +5,10 @@ export const titleStyle = {
     fontFamily: "Arial, sans-serif",
   };
   
-  export const buttonStyle = {
-    fontSize: "32px",
-    color: "#00ff00",
-    fontFamily: "Arial, sans-serif",
+  export const buttonStyle: Phaser.Types.GameObjects.Text.TextStyle = {
+    fontSize: '24px',
+    color: '#ffffff',
+    fontFamily: 'Arial, sans-serif',
   };
   
   export const hoverButtonStyle = {

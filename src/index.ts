@@ -3,6 +3,7 @@ import MainMenu from "./mainMenu/mainMenu";
 import MyGame from "./myGame/myGame";
 import PauseMenu from "./pauseMenu/PauseMenu";
 import GameOverMenu from "./gameOverMenu/GameOverMenu";
+import SettingsMenu from "./settingsMenu/SettingsMenu";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -16,7 +17,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [MainMenu, MyGame, PauseMenu, GameOverMenu],
+  scene: [MainMenu, SettingsMenu, MyGame, PauseMenu, GameOverMenu],
 };
 
 new Phaser.Game(config);

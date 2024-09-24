@@ -24,7 +24,7 @@ import create from './create';
 import update from './update';
 
 export default class MyGame extends Phaser.Scene {
-  private player!: PlayerWithStats;
+  protected player!: PlayerWithStats; // Skift til protected
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
   private isDashing: boolean = false;
@@ -44,7 +44,10 @@ export default class MyGame extends Phaser.Scene {
   private timer!: Timer;
   private killCounter!: KillCounter;
   private levelUpMenu!: LevelUpMenu; // Ensure this is declared
-
+  protected tiles1: Phaser.GameObjects.Group; // Skift til protected
+  protected tiles2: Phaser.GameObjects.Group; // Skift til protected
+  protected tiles3: Phaser.GameObjects.Group; // Skift til protected
+  protected tilePositions: Set<string>; // Skift til protected
   constructor() {
     super({ key: 'MyGame' });
   }

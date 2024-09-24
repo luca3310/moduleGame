@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { hoverButtonStyle, buttonStyle } from "./MainMenuStyles";
 
 export function createButton(
   scene: Phaser.Scene,
@@ -9,22 +8,40 @@ export function createButton(
   style: Phaser.Types.GameObjects.Text.TextStyle,
   callback: () => void
 ): Phaser.GameObjects.Text {
-  const button = scene.add.text(x, y, text, style)
+  const buttonBackground = scene.add.rectangle(x, y, 220, 50, 0x222222, 0.9)
     .setOrigin(0.5)
     .setInteractive()
-    .setAlpha(0); // Start med at være usynlig
+    .setStrokeStyle(2, 0x00cc00); // Sæt standard stroke color
 
-  button.on("pointerdown", callback);
-  button.on("pointerover", () => button.setStyle(hoverButtonStyle).setShadow(2, 2, '#000000', 0.5, true));
-  button.on("pointerout", () => button.setStyle(buttonStyle).setShadow(0, 0, '#000000', 0, true));
+  const buttonText = scene.add.text(x, y, text, style).setOrigin(0.5);
 
-  // Fade-in effekt for knappen
-  scene.tweens.add({
-    targets: button,
-    alpha: 1,
-    duration: 1000,
-    ease: 'Power2',
+  // Animering ved hover
+  buttonBackground.on("pointerover", () => {
+    buttonBackground.setFillStyle(0x444444);
+    buttonText.setColor("#00cc00");
+    scene.tweens.add({
+      targets: buttonBackground,
+      scaleX: 1.05,
+      scaleY: 1.05,
+      duration: 150,
+      ease: "Power1",
+      yoyo: true,
+    });
   });
 
-  return button;
+  buttonBackground.on("pointerout", () => {
+    buttonBackground.setFillStyle(0x222222);
+    buttonText.setColor("#ffffff");
+  });
+
+  buttonBackground.on("pointerdown", () => {
+    buttonBackground.setFillStyle(0x333333); // Mørkere farve ved klik
+    callback();
+  });
+
+  buttonBackground.on("pointerup", () => {
+    buttonBackground.setFillStyle(0x444444);
+  });
+
+  return buttonText; // Returner buttonText
 }

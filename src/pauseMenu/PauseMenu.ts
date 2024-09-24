@@ -35,11 +35,13 @@ export default class PauseMenu extends Phaser.Scene {
     // Player stats
     this.playerStats = createPlayerStats(this);
     
+    // XP Progress Bar
   
     // Lyt til stats ændringer
     this.events.on('statsChanged', (newStats: { [key: string]: number }) => {
       updatePlayerStatsDisplay(this.playerStats, newStats);
     });
+  
   }
 
   private resumeGame(): void {
