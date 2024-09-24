@@ -1,8 +1,8 @@
 import Phaser from "phaser";
-import MainMenu from "./mainMenu";
+import MainMenu from "./mainMenu/mainMenu";
 import MyGame from "./myGame/myGame";
 import PauseMenu from "./PauseMenu";
-import GameOverMenu from "./GameOverMenu";
+import GameOverMenu from "./gameOverMenu/GameOverMenu";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
