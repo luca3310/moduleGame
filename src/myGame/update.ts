@@ -18,17 +18,22 @@ export default function update(time: number, delta: number): void {
     this.healthBar.updatePosition(this.player.x, this.player.y); // Opdater sundhedsbarens position til at følge spilleren
   }
 
-  if (this.player.xp >= this.player.xpToNextLevel) {
-    this.player.level++;
-    console.log('here ');
+// Opdateret level-up logik
+if (this.player.xp >= this.player.xpToNextLevel) {
+  this.player.level += 1;
+  this.player.xp -= this.player.xpToNextLevel;
+  this.player.xpToNextLevel = Math.floor(this.player.xpToNextLevel * 1.5);
 
-    this.player.xp -= this.player.xpToNextLevel;
-    this.player.xpToNextLevel *= 1.5;
+  if (!this.player.levelUp) {
     this.player.levelUp = true;
-
-    // Vis level-up menu
-    this.levelUpMenu.show(this.player.level);
+    this.handleLevelUp();
   }
+}
+
+// Hvis spilleren har opnået levelUp, reset det
+if (this.player.levelUp) {
+    this.player.levelUp = false; // Reset flag efter håndtering
+}
 
   updateTiles.call(this);
 }

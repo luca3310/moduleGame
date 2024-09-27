@@ -1,5 +1,5 @@
 // create.ts
-import LevelUpMenu from '../LevelUpMenu';
+import LevelUpMenu from '../levelUpMenu/LevelUpMenu';
 import createCamera from '../camera/createCamera';
 import keybinds from '../keybinds';
 import createEnemy from '../enemy/createEnemy';
@@ -32,9 +32,6 @@ export default function create(): void {
   createTiles.call(this);
   
   this.initializeUI();
-  // Initialize and create LevelUpMenu
-  this.levelUpMenu = new LevelUpMenu(this);
-  this.levelUpMenu.create(); // Ensure it is created before accessing
 
   this.leftMouseButton = this.input.activePointer;
   this.dashCooldownBar = this.add.graphics();

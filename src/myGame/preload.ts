@@ -17,4 +17,5 @@ export function preload(this: Phaser.Scene): void {
     this.load.audio('zombieHit', 'assets/Sounds/Zombie/163447__under7dude__zombie-hit.wav');
     this.load.json('powerUps', 'assets/powerUps.json');
     // You can load other assets like images here
+    
 }

@@ -16,7 +16,7 @@ import Timer from '../ui/Timer';
 import KillCounter from '../ui/KillCounter';
 import { PlayerWithStats } from '../player/PlayerStats';
 import HealthBar from '../ui/HealthBar';
-import LevelUpMenu from '../LevelUpMenu';
+import LevelUpMenu from '../levelUpMenu/LevelUpMenu';
 import createTiles from '../tiles/createTiles';
 import updateTiles from '../tiles/updateTiles';
 import { preload } from './preload';
@@ -24,7 +24,7 @@ import create from './create';
 import update from './update';
 
 export default class MyGame extends Phaser.Scene {
-  protected player!: PlayerWithStats; // Skift til protected
+  public player!: PlayerWithStats; // Skift til protected
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
   private isDashing: boolean = false;
@@ -64,6 +64,30 @@ export default class MyGame extends Phaser.Scene {
     }
   }
 
+  handleLevelUp(): void {
+    if (this.player.levelUp) {
+      console.log('LevelUpMenu forsøger at åbne');
+      // Check om LevelUpMenu allerede er aktiv
+      if (!this.scene.isActive('LevelUpMenu')) {
+        console.log('LevelUpMenu åbnes nu');
+        this.scene.pause('MyGame');
+        this.scene.launch('LevelUpMenu');
+        this.scene.bringToTop('LevelUpMenu');
+      }
+    }
+  }
+  
+// Når en power-up er valgt, kald denne funktion
+handlePowerUpSelection(): void {
+  // Opdater spillerens stats baseret på den valgte power-up
+
+  // Luk LevelUpMenu og genoptag spillet
+  this.scene.resume('MyGame');
+  this.scene.stop('LevelUpMenu');
+
+  // Reset levelUp flagget EFTER scenen er lukket
+  this.player.levelUp = false;
+}
   preload(): void {
     preload.call(this);
   }
@@ -135,6 +159,19 @@ export default class MyGame extends Phaser.Scene {
     }
   }
 
+// Funktion til at vise og skjule LevelUpMenu
+public toggleLevelUpMenu(): void {
+  if (this.isPaused) {
+      this.scene.resume('MyGame');
+      console.log('Stop LevelUpMenu');
+      this.scene.stop('LevelUpMenu');
+  } else {
+      this.scene.pause('MyGame');
+      this.scene.launch('LevelUpMenu');
+      this.scene.bringToTop('LevelUpMenu');
+  }
+  this.isPaused = !this.isPaused;
+}
   public togglePause(): void {
     if (this.isPaused) {
       this.scene.resume('MyGame');

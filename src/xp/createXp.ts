@@ -43,7 +43,7 @@ export default function createXp() {
     this.xpBlops,
     (player: any, xpBlop: any) => {
       xpBlop.destroy();
-      player.xp += 10;
+      player.xp += 35;
     },
   );
 
