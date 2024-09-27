@@ -6,7 +6,6 @@ import createCamera from '../camera/createCamera';
 import createEnemySpawner from '../enemySpawner/createEnemySpawner';
 import updateEnemyMovement from '../enemy/updateEnemyMovement';
 import createEnemy from '../enemy/createEnemy';
-import createBullet from '../bullet/createBullet';
 import spawnBullet from '../bullet/spawnBullet';
 import createXp from '../xp/createXp';
 import bulletCollision from '../bullet/bulletCollision';
@@ -24,7 +23,7 @@ import create from './create';
 import update from './update';
 
 export default class MyGame extends Phaser.Scene {
-  public player!: PlayerWithStats; // Skift til protected
+  public player!: PlayerWithStats;
   private wasdKeys!: { [key: string]: Phaser.Input.Keyboard.Key };
   private leftMouseButton!: Phaser.Input.Pointer;
   private isDashing: boolean = false;
@@ -43,11 +42,12 @@ export default class MyGame extends Phaser.Scene {
   private fireRate: number = 1000;
   private timer!: Timer;
   private killCounter!: KillCounter;
-  private levelUpMenu!: LevelUpMenu; // Ensure this is declared
-  protected tiles1: Phaser.GameObjects.Group; // Skift til protected
-  protected tiles2: Phaser.GameObjects.Group; // Skift til protected
-  protected tiles3: Phaser.GameObjects.Group; // Skift til protected
-  protected tilePositions: Set<string>; // Skift til protected
+  private levelUpMenu!: LevelUpMenu;
+  protected tiles1: Phaser.GameObjects.Group;
+  protected tiles2: Phaser.GameObjects.Group;
+  protected tiles3: Phaser.GameObjects.Group;
+  protected tilePositions: Set<string>;
+
   constructor() {
     super({ key: 'MyGame' });
   }
@@ -58,8 +58,8 @@ export default class MyGame extends Phaser.Scene {
 
     if (this.player.stats.health <= 0) {
       console.log('Spilleren er død');
-      this.scene.launch('GameOverMenu'); // Vis Game Over menu
-      this.scene.pause(); // Pause spillet
+      this.scene.launch('GameOverMenu');
+      this.scene.pause(); 
       this.scene.bringToTop("GameOverMenu");
     }
   }
@@ -67,7 +67,6 @@ export default class MyGame extends Phaser.Scene {
   handleLevelUp(): void {
     if (this.player.levelUp) {
       console.log('LevelUpMenu forsøger at åbne');
-      // Check om LevelUpMenu allerede er aktiv
       if (!this.scene.isActive('LevelUpMenu')) {
         console.log('LevelUpMenu åbnes nu');
         this.scene.pause('MyGame');
@@ -76,28 +75,23 @@ export default class MyGame extends Phaser.Scene {
       }
     }
   }
-  
-// Når en power-up er valgt, kald denne funktion
-handlePowerUpSelection(): void {
-  // Opdater spillerens stats baseret på den valgte power-up
 
-  // Luk LevelUpMenu og genoptag spillet
-  this.scene.resume('MyGame');
-  this.scene.stop('LevelUpMenu');
+  handlePowerUpSelection(): void {
+    this.scene.resume('MyGame');
+    this.scene.stop('LevelUpMenu');
+    this.player.levelUp = false;  // Nulstil levelUp-flaget
+  }
 
-  // Reset levelUp flagget EFTER scenen er lukket
-  this.player.levelUp = false;
-}
   preload(): void {
     preload.call(this);
   }
 
   create(): void {
-    create.call(this); // Kald den nye create metode
+    create.call(this);
   }
 
   update(time: number, delta: number): void {
-    update.call(this, time, delta); // Kald den nye update metode
+    update.call(this, time, delta);
   }
 
   private initializePlayer(centerX: number, centerY: number): void {
@@ -123,7 +117,7 @@ handlePowerUpSelection(): void {
     this.reloadBar.create();
 
     this.healthBar = new HealthBar(this, this.player);
-    this.healthBar.create(this.player.x, this.player.y); // Opret sundhedsbaren med spillerens startposition
+    this.healthBar.create(this.player.x, this.player.y);
 
     this.timer = new Timer(this);
     this.killCounter = new KillCounter(this);
@@ -159,29 +153,27 @@ handlePowerUpSelection(): void {
     }
   }
 
-// Funktion til at vise og skjule LevelUpMenu
-public toggleLevelUpMenu(): void {
-  if (this.isPaused) {
+  public toggleLevelUpMenu(): void {
+    if (this.isPaused) {
       this.scene.resume('MyGame');
       console.log('Stop LevelUpMenu');
       this.scene.stop('LevelUpMenu');
-  } else {
+    } else {
       this.scene.pause('MyGame');
       this.scene.launch('LevelUpMenu');
       this.scene.bringToTop('LevelUpMenu');
+    }
+    this.isPaused = !this.isPaused;
   }
-  this.isPaused = !this.isPaused;
-}
+
   public togglePause(): void {
     if (this.isPaused) {
       this.scene.resume('MyGame');
       this.scene.stop('PauseMenu');
     } else {
       this.scene.pause('MyGame');
-
       this.scene.launch('PauseMenu');
       this.scene.bringToTop("PauseMenu")
-      
     }
     this.isPaused = !this.isPaused;
   }
@@ -201,8 +193,8 @@ public toggleLevelUpMenu(): void {
 
     this.reloadBar.reset();
     this.healthBar.updateHealth(this.player.stats.health);
-    this.timer = new Timer(this); // Reset timer
-    this.killCounter = new KillCounter(this); // Reset kill counter
+    this.timer = new Timer(this);
+    this.killCounter = new KillCounter(this);
   }
 
   updatePlayerStats(statName: string, value: number): void {

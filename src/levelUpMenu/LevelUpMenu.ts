@@ -6,21 +6,25 @@ export default class LevelUpMenu extends Phaser.Scene {
   private powerUpOptions!: any[];  // Store random power-ups
   private powerUpContainers!: Phaser.GameObjects.Container[]; // Hold power-up containere
   private background!: Phaser.GameObjects.Image; // Baggrund som billede
+  private gameScene!: MyGame; // Reference til MyGame scenen
+  private isMenuOpen: boolean = false; // Tjek om menuen allerede er åben
 
   constructor() {
     super({ key: 'LevelUpMenu' });
   }
 
   create(): void {
+    console.log('LevelUpMenu create() called');
+
     const { width, height } = this.cameras.main;
 
-    // Skab en baggrund med et billede
-    this.background = this.add.image(width / 2, height / 2, '') // Sørg for at tilføje 'menuBackground' til din preload
-      .setDisplaySize(width, height) // Skaler baggrunden til at dække hele skærmen
+    // Skab en baggrund
+    this.background = this.add.image(width / 2, height / 2, 'menuBackground') 
+      .setDisplaySize(width, height)
       .setScrollFactor(0)
-      .setAlpha(0); // Start med at være usynlig
+      .setAlpha(0);
 
-    // Animer baggrunden til at fade ind
+    // Fade-in animation til baggrunden
     this.tweens.add({
       targets: this.background,
       alpha: 1,
@@ -30,113 +34,85 @@ export default class LevelUpMenu extends Phaser.Scene {
 
     // Hent power-ups fra JSON og vælg 3 tilfældige
     const powerUps = this.cache.json.get('powerUps');
-    this.powerUpOptions = Phaser.Utils.Array.Shuffle(powerUps).slice(0, 3); // Hent 3 tilfældige power-ups
+    this.powerUpOptions = Phaser.Utils.Array.Shuffle(powerUps).slice(0, 3);
 
-    // Opret containere til at holde knapperne
-    const containerY = height / 2; // Centrér containerne vertikalt
-    const buttonSpacing = 80; // Plads mellem knapperne
-
-    // Opret en container til alle knapper
-    const buttonContainer = this.add.container(width / 2, containerY);
+    // Container til knapper
+    const buttonContainer = this.add.container(width / 2, height / 2);
 
     this.powerUpOptions.forEach((powerUp, index) => {
       const button = this.createPowerUpButton(powerUp, index);
       buttonContainer.add(button);
-      button.y += index * buttonSpacing; // Placer knapperne med mellemrum
+      button.y += index * 80; // Plads mellem knapperne
     });
+
+    this.gameScene = this.scene.get('MyGame') as MyGame;
   }
 
-  // Opret en funktion til at lave knappen
   private createPowerUpButton(powerUp: any, index: number): Phaser.GameObjects.Container {
     const button = this.add.rectangle(0, 0, 300, 70, 0x4A90E2)
       .setOrigin(0.5)
       .setInteractive()
-      .setStrokeStyle(2, 0x2c3e50) // Kontur farve
-      .setAlpha(0.9) // Gør knappen let gennemsigtig
-      .setDepth(1) // Sørg for at knappen er over baggrunden
+      .setStrokeStyle(2, 0x2c3e50)
+      .setAlpha(0.9)
       .on('pointerover', () => {
-        button.setFillStyle(0x5B99E2); // Hover farve
-        button.setScale(1.05); // Forstørrelse ved hover
-        this.addGlowEffect(button); // Tilføj glødeffekt
+        button.setFillStyle(0x5B99E2);
+        button.setScale(1.05);
+        this.addGlowEffect(button);
       })
       .on('pointerout', () => {
-        button.setFillStyle(0x4A90E2); // Tilbage til original farve
-        button.setScale(1); // Tilbage til normal størrelse
-        this.removeGlowEffect(button); // Fjern glødeffekt
+        button.setFillStyle(0x4A90E2);
+        button.setScale(1);
+        this.removeGlowEffect(button);
       })
       .on('pointerdown', () => {
-        button.setScale(0.95); // Lidt forminskning ved klik
+        button.disableInteractive();
+        button.setScale(0.95);
         this.selectPowerUp(powerUp);
-        console.log(powerUp);
-        
       })
-      .on('pointerup', () => button.setScale(1)); // Tilbage til normal størrelse ved slip
+      .on('pointerup', () => button.setScale(1));
 
-    // Knap baggrund
-    const buttonShadow = this.add.rectangle(0, 5, 300, 70, 0x000000, 0.5) // Skygge bag knappen
-      .setOrigin(0.5)
-      .setDepth(0); // Sørg for at skyggen er bag knappen
+    const buttonShadow = this.add.rectangle(0, 5, 300, 70, 0x000000, 0.5)
+      .setOrigin(0.5);
 
-    // Tilføj billede
     const image = this.add.image(-100, 0, powerUp.imageKey)
       .setOrigin(0.5)
-      .setDisplaySize(50, 50); // Juster størrelsen på billedet
+      .setDisplaySize(50, 50);
 
-    // Tilføj tekst for titlen
-    const titleText = this.add.text(30, -10, `${powerUp.title}`, { 
-      fontSize: '24px', 
-      color: '#fff', 
-      fontFamily: 'Arial',
-      align: 'left'
-    }).setOrigin(0); // Til venstre for billedet
+    const text = this.add.text(20, 0, powerUp.title, { fontSize: '18px', color: '#fff' })
+      .setOrigin(0.5);
 
-    // Tilføj tekst for beskrivelsen
-    const descriptionText = this.add.text(30, 10, `${powerUp.description}`, { 
-      fontSize: '18px', 
-      color: '#fff', 
-      fontFamily: 'Arial',
-      align: 'left'
-    }).setOrigin(0); // Til venstre for billedet
-
-    // Opret en container til knappen og dens elementer
-    const buttonContainer = this.add.container(0, 0, [buttonShadow, button, image, titleText, descriptionText]);
-    return buttonContainer; // Returnér containeren
+    return this.add.container(0, 0, [buttonShadow, button, image, text]);
   }
 
-  // Tilføj en glødeffekt til knappen
+  private selectPowerUp(powerUp: any): void {
+    // Håndter den valgte power-up
+    this.gameScene.handlePowerUpSelection(); 
+    console.log('Power-up valgt:', powerUp);
+  }
+
+  // Sørg for at nulstille "isMenuOpen" når menuen lukkes
+  shutdown(): void {
+    console.log('LevelUpMenu shutdown');
+    this.isMenuOpen = false;  // Nulstil flagget, så menuen kan åbnes igen
+  }
+
   private addGlowEffect(button: Phaser.GameObjects.Rectangle): void {
-    const glow = this.add.rectangle(button.x, button.y, button.width + 20, button.height + 20, 0xFFF700, 0.5)
-      .setOrigin(0.5)
-      .setDepth(-1)
-      .setAlpha(0); // Start med at være usynlig
-
+    // Glødeffekt på hover
     this.tweens.add({
-      targets: glow,
+      targets: button,
       alpha: 1,
-      duration: 300,
-      yoyo: true,
-      repeat: -1, // Gentag for evigt
-      ease: 'Sine.easeInOut'
+      duration: 200,
+      ease: 'Power2'
     });
   }
 
-  // Fjern glødeffekt
   private removeGlowEffect(button: Phaser.GameObjects.Rectangle): void {
-    // Find og fjern glødeffekten
-    this.children.each(child => {
-      if (child instanceof Phaser.GameObjects.Rectangle && child.alpha === 1) {
-        child.destroy(); // Slet glødeffekten
-      }
+    // Fjern glødeffekt
+    this.tweens.add({
+      targets: button,
+      alpha: 0.9,
+      duration: 200,
+      ease: 'Power2'
     });
   }
-
-  // Håndter power-up valg
-  selectPowerUp(powerUp: any): void {
-    const gameScene = this.scene.get('MyGame') as MyGame;
-    gameScene.updatePlayerStats(powerUp.stat, gameScene.player.stats[powerUp.stat] + powerUp.value);
-  
-    // Tilføj visuel feedback, f.eks. et lille "stat-up" ikon eller tekst
-    gameScene.toggleLevelUpMenu();
-  }
-  
 }

@@ -1,11 +1,11 @@
 export default function bulletCollision() {
   this.physics.add.overlap(this.bullets, this.enemies, (bullet: any, enemy: any) => {
     bullet.destroy();
-    enemy.health -= 1;
+    enemy.health -= 3;
 
     this.sound.play('zombieHit');
 
-    const damageText = this.add.text(0, 0, `-${1}`, {
+    const damageText = this.add.text(0, 0, `-${3}`, {
       font: '30px Arial',
       fill: '#ffff00',
       stroke: '#000000',
