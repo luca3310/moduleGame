@@ -1,16 +1,15 @@
 import Phaser from "phaser";
 
 export default class ReloadBar {
-  reset() {
-    throw new Error("Method not implemented.");
-  }
   private reloadBarBackground!: Phaser.GameObjects.Graphics;
   private reloadBar!: Phaser.GameObjects.Graphics;
   private isReloading: boolean = false;
-  private reloadTime: number = 1000;
+  private reloadTime: number; // Gør reloadTime dynamisk
   private reloadStartTime: number = 0;
 
-  constructor(private scene: Phaser.Scene) {}
+  constructor(private scene: Phaser.Scene, fireRate: number) {
+    this.reloadTime = fireRate; // Brug fireRate fra spilleren til reloadTime
+  }
 
   create() {
     const { width, height } = this.scene.cameras.main;

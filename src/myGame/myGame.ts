@@ -39,7 +39,8 @@ export default class MyGame extends Phaser.Scene {
   private healthBar!: HealthBar;
   private isPaused: boolean = false;
   private lastFired: number = 0;
-  private fireRate: number = 1000;
+  private fireRate: number;
+  private damage: number
   private timer!: Timer;
   private killCounter!: KillCounter;
   private levelUpMenu!: LevelUpMenu;
@@ -102,26 +103,40 @@ export default class MyGame extends Phaser.Scene {
     this.player.xpToNextLevel = 100;
     this.player.levelUp = false;
     this.player.stats = {
-      health: 100,
-      damage: 1,
-      fireRate: 1000,
-      speed: 160,
+        health: 10,
+        damage: 1, // Start damage for player
+        fireRate: 2000, // Initial fire rate for player
+        speed: 100,
     };
-  }
+
+    // Tilføj xpPerBlop, attractionSpeed og magnetRadius som en del af spillerens stats
+    this.player.xpPerBlop = 10; // XP pr. blop
+    this.player.attractionSpeed = 200; // Speed of attraction
+    this.player.magnetRadius = 200; // Distance at which XP blops get attracted
+
+    this.fireRate = this.player.stats.fireRate; // Sæt fireRate til player.fireRate
+}
+
+
+
+
+
 
   private initializeUI(): void {
     this.levelBar = new LevelBar(this);
     this.levelBar.create();
-
-    this.reloadBar = new ReloadBar(this);
+  
+    // Send player stats fireRate til ReloadBar
+    this.reloadBar = new ReloadBar(this, this.player.stats.fireRate);
     this.reloadBar.create();
-
+  
     this.healthBar = new HealthBar(this, this.player);
     this.healthBar.create(this.player.x, this.player.y);
-
+  
     this.timer = new Timer(this);
     this.killCounter = new KillCounter(this);
   }
+  
 
   private initializeInput(): void {
     this.input.keyboard.on('keydown-ESC', () => this.togglePause());
@@ -191,7 +206,6 @@ export default class MyGame extends Phaser.Scene {
       this.bullets.clear(true, true);
     }
 
-    this.reloadBar.reset();
     this.healthBar.updateHealth(this.player.stats.health);
     this.timer = new Timer(this);
     this.killCounter = new KillCounter(this);

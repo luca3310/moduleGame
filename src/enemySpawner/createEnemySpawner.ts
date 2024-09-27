@@ -1,10 +1,10 @@
 export default function createEnemySpawner() {
   this.time.addEvent({
-    delay: 3400, // Tid i ms mellem spawns
+    delay: 1500, // Tid i ms mellem spawns
     loop: true, // Gentag for evigt
     callback: () => {
-      const spawnRadius = 300; // Maksimal afstand til spilleren for at spawne fjender
-      const minSpawnDistance = 100; // Minimum afstand fra spilleren for at spawne fjender
+      const spawnRadius = 700; // Maksimal afstand til spilleren for at spawne fjender
+      const minSpawnDistance = 350; // Minimum afstand fra spilleren for at spawne fjender
       const angle = Phaser.Math.FloatBetween(0, 2 * Math.PI);
       const distance = Phaser.Math.Between(minSpawnDistance, spawnRadius); // Random distance between min and max
 

@@ -12,7 +12,11 @@ export type PlayerWithStats = Phaser.Physics.Arcade.Sprite & {
   xpToNextLevel: number;
   levelUp: boolean;
   stats: PlayerStats; // Ny stats-egenskab
+  xpPerBlop: number;  // XP pr. blop
+  attractionSpeed: number; // Tilføj attractionSpeed
+  magnetRadius: number; // Tilføj magnetRadius
 };
+
 
 export class PlayerStatsManager {
   static init(player: PlayerWithStats) {
@@ -22,7 +26,7 @@ export class PlayerStatsManager {
     player.stats = {
       health: 100,
       damage: 10,
-      fireRate: 1,
+      fireRate: 10,
       speed: 160,
     };
   }
