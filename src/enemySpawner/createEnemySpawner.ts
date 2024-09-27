@@ -1,6 +1,6 @@
 export default function createEnemySpawner() {
   this.time.addEvent({
-    delay: 1500, // Tid i ms mellem spawns
+    delay: 2300, // Tid i ms mellem spawns
     loop: true, // Gentag for evigt
     callback: () => {
       const spawnRadius = 700; // Maksimal afstand til spilleren for at spawne fjender

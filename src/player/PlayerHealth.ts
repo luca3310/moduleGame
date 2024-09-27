@@ -1,6 +1,5 @@
 export default class PlayerHealth {
     static init(player: any, healthBar: any) {
-      player.health = 100; // Initial health
       player.setDepth(0);
       
       // Opdater sundhedsbar

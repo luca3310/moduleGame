@@ -103,10 +103,13 @@ export default class MyGame extends Phaser.Scene {
     this.player.xpToNextLevel = 100;
     this.player.levelUp = false;
     this.player.stats = {
-        health: 10,
+        health: 100,
         damage: 1, // Start damage for player
-        fireRate: 2000, // Initial fire rate for player
+        fireRate: 1850, // Initial fire rate for player
         speed: 100,
+        dashSpeed: 10000, // Speed during dash
+        dashDuration: 200, // Dash lasts for 200ms
+        dashCooldown: 1000, // Cooldown for 1 second
     };
 
     // Tilføj xpPerBlop, attractionSpeed og magnetRadius som en del af spillerens stats
@@ -116,11 +119,6 @@ export default class MyGame extends Phaser.Scene {
 
     this.fireRate = this.player.stats.fireRate; // Sæt fireRate til player.fireRate
 }
-
-
-
-
-
 
   private initializeUI(): void {
     this.levelBar = new LevelBar(this);
