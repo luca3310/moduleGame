@@ -1,9 +1,6 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 export function preload(this: Phaser.Scene): void {
-    this.load.image('playerStand', 'assets/Player/player_stand.png');
-    this.load.image('playerWalk1', 'assets/Player/player_walk1.png');
-    this.load.image('playerWalk2', 'assets/Player/player_walk2.png');
     this.load.image('enemyStand', 'assets/Enemy/zombie_stand.png');
     this.load.image('enemyWalk1', 'assets/Enemy/zombie_walk1.png');
     this.load.image('enemyWalk2', 'assets/Enemy/zombie_walk2.png');

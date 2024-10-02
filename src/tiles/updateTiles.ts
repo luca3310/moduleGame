@@ -1,7 +1,7 @@
 export default function updateTiles() {
   // Now, update the tiles
   const tileScale = 4;
-  const tileOutline = 400
+  const tileOutline = 1200
   const tileSize =
     this.textures.get("tile_001").getSourceImage().width * tileScale;
 

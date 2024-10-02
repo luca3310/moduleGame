@@ -1,5 +1,5 @@
 [
-    { "imageKey": "powerUpDamage", "title": "Damage Boost", "description": "Increase damage by 10%", "value": 10 },
+    { "imageKey": "powerUpDamage", "title": "Damage Boost", "description": "Increase damage by 10%", "value": 1 },
     { "imageKey": "powerUpSpeed", "title": "Speed Boost", "description": "Boost speed by 20%", "value": 20 },
     { "imageKey": "powerUpHealth", "title": "Health Increase", "description": "Enhance health by 32%", "value": 32 },
     { "imageKey": "powerUpCooldown", "title": "Cooldown Reduction", "description": "Reduce cooldown by 15%", "value": -15 },

@@ -115,10 +115,10 @@ export default class MyGame extends Phaser.Scene {
         health: 100,
         damage: 1, // Start damage for player
         fireRate: 1850, // Initial fire rate for player
-        speed: 100,
+        speed: 70,
         dashSpeed: 10000, // Speed during dash
         dashDuration: 200, // Dash lasts for 200ms
-        dashCooldown: 1000, // Cooldown for 1 second
+        dashCooldown: 4000, // Cooldown for 1 second
     };
 
     // Tilføj xpPerBlop, attractionSpeed og magnetRadius som en del af spillerens stats
