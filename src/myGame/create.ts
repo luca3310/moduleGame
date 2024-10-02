@@ -23,7 +23,7 @@ export default function create(): void {
   this.initializeInput();
 
   createCamera.call(this);
-  keybinds.call(this, Phaser);
+  keybinds.call(this, Phaser); // Sørg for at 'this' er korrekt
   createEnemy.call(this);
   createEnemySpawner.call(this);
   createBullet.call(this);
@@ -42,5 +42,4 @@ export default function create(): void {
     volume: 0.5,
   });
   ambience.play();
-  
 }
