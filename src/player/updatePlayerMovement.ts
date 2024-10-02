@@ -38,11 +38,11 @@ export default function updatePlayerMovement() {
   // Movement left/right
   if (this.wasdKeys.A.isDown) {
     this.player.setVelocityX(-speed);
-    this.player.setFlipX(true); // Flip image to the left
+    this.player.setFlipX(false); // Flip image to the left
     isMoving = true;
   } else if (this.wasdKeys.D.isDown) {
     this.player.setVelocityX(speed);
-    this.player.setFlipX(false); // Normal image to the right
+    this.player.setFlipX(true); // Normal image to the right
     isMoving = true;
   } else {
     this.player.setVelocityX(0); // Stop movement on X-axis
@@ -51,7 +51,10 @@ export default function updatePlayerMovement() {
   // Play walk animation if the player is moving
   if (isMoving) {
     this.player.anims.play("walk", true);
+    this.player.setScale(3); 
+
   } else {
-    this.player.setTexture("playerStand"); // Standing still when not moving
+    this.player.setTexture("playerIdle1"); // Standing still when not moving
+    this.player.setScale(3); 
   }
 }

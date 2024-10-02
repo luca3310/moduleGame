@@ -13,7 +13,7 @@ export default function createEnemy() {
     // Opret animationer for fjendens bevægelse
     this.anims.create({
       key: "enemyWalk",
-      frames: [{ key: "enemyWalk1" }, { key: "enemyWalk2" }],
+      frames: [{ key: "meatEnemyRun1" }, { key: "meatEnemyRun2" }, { key: "meatEnemyRun3" }, { key: "meatEnemyRun4" } ],
       frameRate: 10,
       repeat: -1, // Animationen skal gentage sig
     });
