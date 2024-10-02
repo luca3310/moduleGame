@@ -33,5 +33,14 @@ export function preload(this: Phaser.Scene): void {
     this.load.image('meatEnemyRun3', 'assets/meatEnemy/meatEnemyRun3.png');
     this.load.image('meatEnemyRun4', 'assets/meatEnemy/meatEnemyRun4.png');
 
+    this.load.image("tile_001", "assets/tiles/tile_001.png")
+    this.load.image("tile_002", "assets/tiles/tile_002.png")
+    this.load.image("tile_003", "assets/tiles/tile_003.png")
+    this.load.image("tile_004", "assets/tiles/tile_004.png")
+    this.load.image("tile_005", "assets/tiles/tile_005.png")
+    this.load.image("tile_006", "assets/tiles/tile_006.png")
+    this.load.image("tile_007", "assets/tiles/tile_007.png")
+
+
 
 }

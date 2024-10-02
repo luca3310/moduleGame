@@ -1,15 +1,16 @@
 export default function updateTiles() {
   // Now, update the tiles
   const tileScale = 4;
+  const tileOutline = 400
   const tileSize =
-    this.textures.get("tile1").getSourceImage().width * tileScale;
+    this.textures.get("tile_001").getSourceImage().width * tileScale;
 
   // Function to check if a position is within the tileOutline
   const isWithinTileOutline = (x: number, y: number) => {
-    const minX = this.player.x - 1;
-    const maxX = this.player.x + 1;
-    const minY = this.player.y - 1;
-    const maxY = this.player.y + 1;
+    const minX = this.player.x - tileOutline;
+    const maxX = this.player.x + tileOutline;
+    const minY = this.player.y - tileOutline;
+    const maxY = this.player.y + tileOutline;
     return x >= minX && x < maxX && y >= minY && y < maxY;
   };
 
@@ -51,21 +52,32 @@ export default function updateTiles() {
   // Now, create new tiles at positionsToAdd
   for (let pos of positionsToAdd) {
     // Randomly select a tile type (1, 2, or 3)
-    const randomTile = Phaser.Math.Between(1, 3);
+    const randomTile = Phaser.Math.Between(1, 11);
     let tileGroup;
     let tileKey;
 
-    if (randomTile === 1) {
+    if (randomTile === 1 || randomTile === 8) {
       tileGroup = this.tiles1;
-      tileKey = "tile1";
-    } else if (randomTile === 2) {
+      tileKey = "tile_001";
+    } else if (randomTile === 2 || randomTile === 9) {
       tileGroup = this.tiles2;
-      tileKey = "tile2";
-    } else {
+      tileKey = "tile_002";
+    } else if (randomTile === 3) {
       tileGroup = this.tiles3;
-      tileKey = "tile3";
+      tileKey = "tile_003";
+    } else if (randomTile === 4){
+      tileGroup = this.tiles3;
+      tileKey = "tile_004";
+    } else if (randomTile === 5) {
+      tileGroup = this.tiles3;
+      tileKey = "tile_005";
+    } else if (randomTile === 6 || randomTile === 10){
+      tileGroup = this.tiles3;
+      tileKey = "tile_006";
+    } else if (randomTile === 7 || randomTile === 11){
+      tileGroup = this.tiles3;
+      tileKey = "tile_007";
     }
-
     // Create the tile at the neighbor position
     const newTile = tileGroup.get(pos.x, pos.y, tileKey);
     newTile.x = pos.x;
