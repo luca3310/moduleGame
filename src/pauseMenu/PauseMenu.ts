@@ -20,29 +20,29 @@ export default class PauseMenu extends Phaser.Scene {
   
     // Baggrund
     this.background = createBackground(this, width / 2, height / 2, width, height, 0x000000, 0.7);
-    
-    // Sæt dybden af baggrunden
-    this.background.setDepth(0); // Eller en lavere værdi
+    this.background.setDepth(0);
   
     // Resume og Quit knapper
     this.resumeButton = createButton(this, width / 2, height / 2 - 50, "Resume", "#00ff00", () => this.resumeGame());
     this.quitButton = createButton(this, width / 2, height / 2 + 50, "Quit", "#ff0000", () => this.quitGame());
+    this.resumeButton.setDepth(1);
+    this.quitButton.setDepth(1);
   
-    // Sæt dybden for knapperne
-    this.resumeButton.setDepth(1); // Højere værdi end baggrunden
-    this.quitButton.setDepth(1); // Højere værdi end baggrunden
-  
-    // Player stats
+    // Initialiser spillerstatistik visning
     this.playerStats = createPlayerStats(this);
-    
-    // XP Progress Bar
+  
+    // Hent nuværende spillerstatistik fra MyGame
+    const gameScene = this.scene.get("MyGame") as MyGame;
+    const currentStats = gameScene.getPlayerStats();
+    updatePlayerStatsDisplay(this.playerStats, currentStats);
   
     // Lyt til stats ændringer
-    this.events.on('statsChanged', (newStats: { [key: string]: number }) => {
+    gameScene.events.on('statsChanged', (newStats: { [key: string]: number }) => {
       updatePlayerStatsDisplay(this.playerStats, newStats);
     });
-  
   }
+  
+  
 
   private resumeGame(): void {
     const gameScene = this.scene.get("MyGame") as MyGame;

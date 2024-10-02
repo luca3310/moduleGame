@@ -20,6 +20,7 @@ export function createPlayerStats(scene: Phaser.Scene): { [key: string]: Phaser.
   return playerStats;
 }
 
+
 export function updatePlayerStatsDisplay(
   playerStats: { [key: string]: Phaser.GameObjects.Text },
   stats: { [key: string]: number }

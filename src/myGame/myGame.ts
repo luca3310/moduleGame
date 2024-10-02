@@ -65,6 +65,16 @@ export default class MyGame extends Phaser.Scene {
     }
   }
 
+    // Tilføj en metode til at hente spillerstatistikker
+    public getPlayerStats(): { [key: string]: number } {
+      return {
+        Health: this.player.stats.health,
+        Damage: this.player.stats.damage,
+        'Fire Rate': this.player.stats.fireRate,
+        Speed: this.player.stats.speed,
+      };
+    }
+
   handleLevelUp(): void {
     if (this.player.levelUp) {
       console.log('LevelUpMenu forsøger at åbne');

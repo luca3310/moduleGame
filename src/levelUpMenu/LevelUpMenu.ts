@@ -85,10 +85,39 @@ export default class LevelUpMenu extends Phaser.Scene {
   }
 
   private selectPowerUp(powerUp: any): void {
-    // Håndter den valgte power-up
-    this.gameScene.handlePowerUpSelection(); 
+    // Håndter den valgte power-up ved at tilføje værdien til spillerens stats
+    switch (powerUp.imageKey) {
+        case 'powerUpDamage':
+            this.gameScene.player.stats.damage += powerUp.value;
+            break;
+        case 'powerUpSpeed':
+            this.gameScene.player.stats.speed += powerUp.value;
+            break;
+        case 'powerUpHealth':
+            this.gameScene.player.stats.health += powerUp.value;
+            break;
+        case 'powerUpCooldown':
+            this.gameScene.player.stats.dashCooldown += powerUp.value; // Reduktion af cooldown
+            break;
+        case 'powerUpFireRate':
+            this.gameScene.player.stats.fireRate += powerUp.value; // Øget skudhastighed
+            break;
+        case 'powerUpDashSpeed':
+            this.gameScene.player.stats.dashSpeed += powerUp.value;
+            break;
+        case 'powerUpDashDuration':
+            this.gameScene.player.stats.dashDuration += powerUp.value;
+            break;
+        case 'powerUpBulletSpeed':
+            // Hvis du har en bulletSpeed-stat i dine spillerstats, kan du tilføje her.
+            break;
+        default:
+            console.log('Ukendt power-up valgt');
+    }
+
     console.log('Power-up valgt:', powerUp);
-  }
+    this.gameScene.handlePowerUpSelection();
+}
 
   // Sørg for at nulstille "isMenuOpen" når menuen lukkes
   shutdown(): void {
