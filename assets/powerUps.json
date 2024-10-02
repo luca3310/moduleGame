@@ -6,5 +6,6 @@
     { "imageKey": "powerUpFireRate", "title": "Fire Rate Boost", "description": "Increase fire rate by 25%", "value": -25 },
     { "imageKey": "powerUpDashSpeed", "title": "Dash Speed", "description": "Increase dash speed by 15%", "value": 15 },
     { "imageKey": "powerUpDashDuration", "title": "Dash Duration", "description": "Extend dash duration by 2 seconds", "value": 2000 },
-    { "imageKey": "powerUpBulletSpeed", "title": "Bullet Speed", "description": "Increase bullet speed by 30%", "value": 30 }
+    { "imageKey": "powerUpBulletSpeed", "title": "Bullet Speed", "description": "Increase bullet speed by 30%", "value": 30 },
+    { "imageKey": "powerUpMagnet", "title": "Magnet Boost", "description": "Increase magnet radius by 50", "value": 50 }
 ]
