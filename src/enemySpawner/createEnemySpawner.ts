@@ -25,8 +25,8 @@ export default function createEnemySpawner() {
       );
 
       // Gør fjendens fysiklegeme større end renderen
-      const bodyWidth = 60; // Fysiklegeme bredde (større end den visuelle størrelse)
-      const bodyHeight = 100; // Fysiklegeme højde
+      const bodyWidth = 10; // Fysiklegeme bredde (større end den visuelle størrelse)
+      const bodyHeight = 20; // Fysiklegeme højde
       enemy.setSize(bodyWidth, bodyHeight);
 
       // Juster offset, hvis fysiklegemet er større end sprite

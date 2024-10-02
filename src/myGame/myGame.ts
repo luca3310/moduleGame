@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import createPlayer from '../player/createPlayer';
 import updatePlayerMovement from '../player/updatePlayerMovement';
-import keybinds from '../keybinds';
 import createCamera from '../camera/createCamera';
 import createEnemySpawner from '../enemySpawner/createEnemySpawner';
 import updateEnemyMovement from '../enemy/updateEnemyMovement';

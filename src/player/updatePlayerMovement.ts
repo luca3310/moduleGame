@@ -25,10 +25,10 @@ export default function updatePlayerMovement() {
   }
 
   // Movement up/down
-  if (this.wasdKeys.W.isDown) {
+  if (this.wasdKeys.W.isDown || this.arrowKeys.Up.isDown) {
     this.player.setVelocityY(-speed);
     isMoving = true;
-  } else if (this.wasdKeys.S.isDown) {
+  } else if (this.wasdKeys.S.isDown || this.arrowKeys.Down.isDown) {
     this.player.setVelocityY(speed);
     isMoving = true;
   } else {
@@ -36,11 +36,11 @@ export default function updatePlayerMovement() {
   }
 
   // Movement left/right
-  if (this.wasdKeys.A.isDown) {
+  if (this.wasdKeys.A.isDown || this.arrowKeys.Left.isDown) {
     this.player.setVelocityX(-speed);
     this.player.setFlipX(false); // Flip image to the left
     isMoving = true;
-  } else if (this.wasdKeys.D.isDown) {
+  } else if (this.wasdKeys.D.isDown || this.arrowKeys.Right.isDown) {
     this.player.setVelocityX(speed);
     this.player.setFlipX(true); // Normal image to the right
     isMoving = true;
@@ -52,7 +52,6 @@ export default function updatePlayerMovement() {
   if (isMoving) {
     this.player.anims.play("walk", true);
     this.player.setScale(3); 
-
   } else {
     this.player.setTexture("playerIdle1"); // Standing still when not moving
     this.player.setScale(3); 
