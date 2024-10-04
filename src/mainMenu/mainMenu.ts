@@ -43,16 +43,14 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   private startGame(): void {
-    // Stop og fjern MyGame, hvis den allerede er tilføjet
     if (this.scene.get("MyGame")) {
       this.scene.stop("MyGame");
       this.scene.remove("MyGame");
     }
-  
-    // Start LoaderScene
-    this.scene.start("LoaderScene");
+    const newGame = new MyGame();
+    this.scene.add("MyGame", newGame);
+    this.scene.start("MyGame");
   }
-  
 
   private openSettings(): void {
     this.scene.start("SettingsMenu");
