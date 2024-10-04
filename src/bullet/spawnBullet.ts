@@ -19,7 +19,6 @@ export default function spawnBullet() {
 
     bullet.setVelocity(direction.x * bulletSpeed, direction.y * bulletSpeed);
 
-    bullet.setScale(3)
 
     // Destroy bullet after 3 seconds if it doesn't hit anything
     this.time.delayedCall(3000, () => {
