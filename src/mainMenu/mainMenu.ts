@@ -21,13 +21,15 @@ export default class MainMenu extends Phaser.Scene {
     this.background = this.add.image(width / 2, height / 2, 'menuBackground').setOrigin(0.5).setDisplaySize(width, height);
     
     // Titel
-    const titleText = this.add.text(width / 2, height / 2 - 150, "My Game Title", titleStyle).setOrigin(0.5).setAlpha(0);
+    const titleText = this.add.text(width / 2, height / 2 - 150, "Veganske Klør", titleStyle).setOrigin(0.5).setAlpha(0);
     this.tweens.add({
       targets: titleText,
       alpha: 1,
       duration: 1000,
       ease: 'Power2',
     });
+
+    
 
     // Start Game-knap
     createButton(this, width / 2, height / 2, "Start Game", buttonStyle, () => {
@@ -41,14 +43,16 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   private startGame(): void {
+    // Stop og fjern MyGame, hvis den allerede er tilføjet
     if (this.scene.get("MyGame")) {
       this.scene.stop("MyGame");
       this.scene.remove("MyGame");
     }
-    const newGame = new MyGame();
-    this.scene.add("MyGame", newGame);
-    this.scene.start("MyGame");
+  
+    // Start LoaderScene
+    this.scene.start("LoaderScene");
   }
+  
 
   private openSettings(): void {
     this.scene.start("SettingsMenu");
