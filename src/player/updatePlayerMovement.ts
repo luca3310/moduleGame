@@ -51,9 +51,7 @@ export default function updatePlayerMovement() {
   // Play walk animation if the player is moving
   if (isMoving) {
     this.player.anims.play("walk", true);
-    this.player.setScale(3); 
   } else {
     this.player.setTexture("playerIdle1"); // Standing still when not moving
-    this.player.setScale(3); 
   }
 }

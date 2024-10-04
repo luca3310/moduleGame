@@ -1,9 +1,8 @@
 export default function updateTiles() {
   // Now, update the tiles
-  const tileScale = 4;
   const tileOutline = 1200
   const tileSize =
-    this.textures.get("tile_001").getSourceImage().width * tileScale;
+    this.textures.get("tile_000").getSourceImage().width;
 
   // Function to check if a position is within the tileOutline
   const isWithinTileOutline = (x: number, y: number) => {
@@ -47,6 +46,15 @@ export default function updateTiles() {
         this.tilePositions.add(key);
       }
     }
+
+    if (!isWithinTileOutline(x, y)) {
+      // Remove tile
+      tile.destroy();
+
+      // Remove position from tilePositions
+      this.tilePositions.delete(`${x},${y}`);
+    }
+  
   }
 
   // Now, create new tiles at positionsToAdd
@@ -58,44 +66,30 @@ export default function updateTiles() {
 
     if (randomTile === 1 || randomTile === 8) {
       tileGroup = this.tiles1;
-      tileKey = "tile_001";
+      tileKey = "tile_000";
     } else if (randomTile === 2 || randomTile === 9) {
       tileGroup = this.tiles2;
-      tileKey = "tile_002";
+      tileKey = "tile_001";
     } else if (randomTile === 3) {
       tileGroup = this.tiles3;
-      tileKey = "tile_003";
+      tileKey = "tile_002";
     } else if (randomTile === 4){
       tileGroup = this.tiles3;
-      tileKey = "tile_004";
+      tileKey = "tile_003";
     } else if (randomTile === 5) {
       tileGroup = this.tiles3;
-      tileKey = "tile_005";
+      tileKey = "tile_004";
     } else if (randomTile === 6 || randomTile === 10){
       tileGroup = this.tiles3;
-      tileKey = "tile_006";
+      tileKey = "tile_005";
     } else if (randomTile === 7 || randomTile === 11){
       tileGroup = this.tiles3;
-      tileKey = "tile_007";
+      tileKey = "tile_006";
     }
     // Create the tile at the neighbor position
     const newTile = tileGroup.get(pos.x, pos.y, tileKey);
     newTile.x = pos.x;
     newTile.y = pos.y;
-    newTile.setScale(tileScale, tileScale); // Apply the scale
     newTile.setDepth(-1); // Set the depth for the tiles
-  }
-
-  // Remove tiles that are outside of the tileOutline
-  for (let tile of allTiles) {
-    const x = tile.x;
-    const y = tile.y;
-    if (!isWithinTileOutline(x, y)) {
-      // Remove tile
-      tile.destroy();
-
-      // Remove position from tilePositions
-      this.tilePositions.delete(`${x},${y}`);
-    }
   }
 }

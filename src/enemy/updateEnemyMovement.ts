@@ -23,7 +23,6 @@ export default function updateEnemyMovement(): void {
     // Tjek om fjenden bevæger sig, og afspil animationen
     if (velocityX !== 0 || velocityY !== 0) {
       enemy.anims.play('enemyWalk', true); // Afspil 'walk'-animation
-      enemy.setScale(3)
       const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.player.x, this.player.y);
       enemy.setRotation(angle - 90);
     } else {
