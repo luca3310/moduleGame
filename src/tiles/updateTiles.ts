@@ -46,6 +46,15 @@ export default function updateTiles() {
         this.tilePositions.add(key);
       }
     }
+
+    if (!isWithinTileOutline(x, y)) {
+      // Remove tile
+      tile.destroy();
+
+      // Remove position from tilePositions
+      this.tilePositions.delete(`${x},${y}`);
+    }
+  
   }
 
   // Now, create new tiles at positionsToAdd
@@ -82,18 +91,5 @@ export default function updateTiles() {
     newTile.x = pos.x;
     newTile.y = pos.y;
     newTile.setDepth(-1); // Set the depth for the tiles
-  }
-
-  // Remove tiles that are outside of the tileOutline
-  for (let tile of allTiles) {
-    const x = tile.x;
-    const y = tile.y;
-    if (!isWithinTileOutline(x, y)) {
-      // Remove tile
-      tile.destroy();
-
-      // Remove position from tilePositions
-      this.tilePositions.delete(`${x},${y}`);
-    }
   }
 }
