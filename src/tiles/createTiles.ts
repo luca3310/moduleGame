@@ -1,5 +1,5 @@
 export default function createTiles() {
-  const tileScale = 4;
+  const tileScale = 3;
 
   // Define tile groups for different types of tiles
   this.tiles1 = this.physics.add.group({ defaultKey: "tile_001" });
