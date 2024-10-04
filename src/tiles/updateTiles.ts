@@ -23,38 +23,35 @@ export default function updateTiles() {
   // Set to keep track of positions to add (to avoid duplicates)
   const positionsToAdd = [];
 
-  // For each existing tile
-  for (let tile of allTiles) {
+   // For each existing tile
+   for (let tile of allTiles) {
     const x = tile.x;
     const y = tile.y;
 
-    // Neighboring positions (up, down, left, right)
-    const neighbors = [
-      { x: x + tileSize, y: y },
-      { x: x - tileSize, y: y },
-      { x: x, y: y + tileSize },
-      { x: x, y: y - tileSize },
-    ];
+    if (!isWithinTileOutline(x, y)) {
+      // Remove tile outside the outline
+      tile.destroy();
+      this.tilePositions.delete(`${x},${y}`);
+    } else {
+      // Neighboring positions (up, down, left, right)
+      const neighbors = [
+        { x: x + tileSize, y: y },
+        { x: x - tileSize, y: y },
+        { x: x, y: y + tileSize },
+        { x: x, y: y - tileSize },
+      ];
 
-    for (let neighbor of neighbors) {
-      const key = `${neighbor.x},${neighbor.y}`;
-      if (
-        !this.tilePositions.has(key) &&
-        isWithinTileOutline(neighbor.x, neighbor.y)
-      ) {
-        positionsToAdd.push(neighbor);
-        this.tilePositions.add(key);
+      for (let neighbor of neighbors) {
+        const key = `${neighbor.x},${neighbor.y}`;
+        if (
+          !this.tilePositions.has(key) &&
+          isWithinTileOutline(neighbor.x, neighbor.y)
+        ) {
+          positionsToAdd.push(neighbor);
+          this.tilePositions.add(key);
+        }
       }
     }
-
-    if (!isWithinTileOutline(x, y)) {
-      // Remove tile
-      tile.destroy();
-
-      // Remove position from tilePositions
-      this.tilePositions.delete(`${x},${y}`);
-    }
-  
   }
 
   // Now, create new tiles at positionsToAdd
